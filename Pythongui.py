@@ -27,7 +27,7 @@ except Exception as e:
 
 
 
-       
+
 
 #mounting the image on the frame
 my_img = ImageTk.PhotoImage(Image.open("enlightened.ico"))
@@ -50,12 +50,12 @@ enter_password = Entry(frame, width=30)
 enter_password .grid(row=9, column=1, sticky='NSEW')
 
 def logOut():
-    
+
     global response
     response =messagebox.askyesno("log-out window", "Do you want to log out")
 
     if response == 1:
-        root.destroy()
+        root.quit()
     else:
         return
 
@@ -63,7 +63,7 @@ def global_window():
     global globe_welcome_Label
     global icon_backHome, icon_backHome1
     frame_globe= Frame(root)
-    frame_globe.grid(column=0,row=0,sticky=N+S+W+E)
+    frame_globe.place(x=0, y=0,relheight=1,relwidth=1,anchor=NW)
     frame.forget()
     globe_welcome_Label= Label(frame_globe, text="This is the global Data Window", font="Helvetica  25 bold",padx=100)
     globe_welcome_Label.grid(column=1,row=0)
@@ -80,7 +80,7 @@ def yourHealth_window():
     global icon_backHome, icon_backHome1
 
     frame_health= Frame(root)
-    frame_health.grid(column=0,row=0,sticky=N+S+W+E)
+    frame_health.place(x=0, y=0,relheight=1,relwidth=1,anchor=NW)
     frame.forget()
 
     health_welcLabel= Label(frame_health, text="This is the Customers Health Window", font="Helvetica  25 bold",padx=100)
@@ -98,7 +98,7 @@ def yourInfo_window():
     global icon_backHome, icon_backHome1
 
     frame_info= Frame(root)
-    frame_info.grid(column=0,row=0,sticky=N+S+W+E)
+    frame_info.place(x=0, y=0,relheight=1,relwidth=1,anchor=NW)
     frame.forget()
 
     info_welcLabel= Label(frame_info, text="This is the Customers Personal Information Window", font="Helvetica  25 bold",padx=100)
@@ -115,7 +115,7 @@ def developer_window():
     global icon_backHome, icon_backHome1
 
     frame_dev= Frame(root)
-    frame_dev.grid(column=0,row=0,sticky=N+S+W+E)
+    frame_dev.place(x=0, y=0,relheight=1,relwidth=1,anchor=NW)
     frame.forget()
 
     dev_welcLabel= Label(frame_dev, text="We like coding, coding is the best thing that happened to us", font="Helvetica  25 bold",padx=100)
@@ -132,55 +132,68 @@ def home_button():
     # root, options) one can also include some options here
     frame1 = Frame(root)
    # We fill up the screen for expansion, then forget previous frame
-    frame1.grid(column=0, row=0, sticky=N+S+W+E)
+    frame1.place(x=0, y=0,relheight=1,relwidth=1,anchor=NW)
+   # frame1.grid(column=0, row=0, sticky=N+S+W+E)
     #Dismounts the previous frame
     frame.forget()
 
+    
+    
+
 
     #This are the sidebar Menu icons
-    global icon_menu, icon_globe, icon_programmer, icon_heartbeat, icon_info
+    global icon_menu, icon_globe, icon_programmer, icon_heartbeat, icon_info,ico_bg
     global menu_btn, globe_btn,programmer_btn, heartbeat_btn,info_btn
-    global icon_menu1, icon_globe1, icon_programmer1, icon_heartbeat1, icon_info1
+    global icon_menu1, icon_globe1, icon_programmer1, icon_heartbeat1, icon_info1,icon_bg1
+
+    icon_bg = Image.open("C:/Users/use/Desktop/Covid-19 Group project/bg_icon.png")
+    icon_bg = icon_bg.resize((1600, 900), Image.ANTIALIAS)
+    icon_bg1 = ImageTk.PhotoImage(icon_bg)
+    bg_label = Label(frame1, image=icon_bg1)
+    bg_label.place(x=0, y=0,relheight=1,relwidth=1,anchor=NW)
+
+
 
     #antialias is used to resize here
     icon_menu = Image.open("C:/Users/use/Desktop/Covid-19 Group project/menu_icon.png")
     icon_menu = icon_menu.resize((50, 50), Image.ANTIALIAS)
     icon_menu1 = ImageTk.PhotoImage(icon_menu)
     menu_btn = Button(frame1, image=icon_menu1, relief=RAISED)
-    menu_btn.grid(row=0, column=0,pady=5)
+    menu_btn.place(rely=0.00625, relx=0.00625)
 
     icon_globe = Image.open("C:/Users/use/Desktop/Covid-19 Group project/globe_icon.png")
     icon_globe= icon_globe.resize((50, 50), Image.ANTIALIAS)
     icon_globe1 = ImageTk.PhotoImage(icon_globe)
     globe_btn = Button(frame1, image=icon_globe1, relief=RAISED,command=global_window)
-    globe_btn.grid(row=1, column=0,pady=5)
+    globe_btn.place(rely=0.125, relx=0.00625)
 
     icon_heartbeat = Image.open("C:/Users/use/Desktop/Covid-19 Group project/heartbeat_icon.png")
     icon_heartbeat = icon_heartbeat.resize((50, 50), Image.ANTIALIAS)
     icon_heartbeat1 = ImageTk.PhotoImage(icon_heartbeat)
     heartbeat_btn = Button(frame1, image=icon_heartbeat1, relief=RAISED,command=yourHealth_window)
-    heartbeat_btn.grid(row=2, column=0,pady=5)
+    heartbeat_btn.place(rely=0.25, relx=0.00625)
 
     icon_info= Image.open("C:/Users/use/Desktop/Covid-19 Group project/info_icon.png")
     icon_info = icon_info.resize((50, 50), Image.ANTIALIAS)
     icon_info1 = ImageTk.PhotoImage(icon_info)
     info_btn = Button(frame1, image=icon_info1, relief=RAISED,command=yourInfo_window)
-    info_btn.grid(row=3, column=0,pady=5)
+    info_btn.place(rely=0.375, relx=0.00625)
 
     icon_programmer = Image.open("C:/Users/use/Desktop/Covid-19 Group project/programmer_icon.png")
     icon_programmer = icon_programmer.resize((50, 50), Image.ANTIALIAS)
     icon_programmer1 = ImageTk.PhotoImage(icon_programmer)
     programmer_btn = Button(frame1, image=icon_programmer1, relief=RAISED,command=developer_window)
-    programmer_btn.grid(row=4, column=0,pady=5)
+    programmer_btn.place(rely=0.5, relx=0.00625)
 
     #Mounting the welcome label
     global welcome_label, feel_label
-    welcome_label= Label(frame1, text="Welcome", font="Helvetica  25 bold",padx=100)
-    welcome_label.grid(row=0, column=1,sticky=N+S+W+E,columnspan= 4,pady=20 )
+    welcome_label= Label(frame1, text="Welcome", font="Helvetica  25 bold",padx=100,bg="#233D72",fg="white")
+    welcome_label.place(rely=0.094444, relx=0.17222, relwidth=0.18 )
       #how are you feel
-    welcome_label= Label(frame1, text="How are you feeling today?", font="Helvetica  10 bold",padx=100)
-    welcome_label.grid(row=2, column=1,sticky=N+S+W+E,columnspan= 3,pady=5 )
-  
+
+    welcome_label= Label(frame1, text="How are you feeling today?", font="Helvetica  10 bold",bg="#233D72",fg="white")
+    welcome_label.place(rely=0.25, relx=0.085625 )
+
 
     #emoji Icons
     global icon_great, icon_bad, icon_notSure
@@ -191,23 +204,23 @@ def home_button():
     icon_great = Image.open("C:/Users/use/Desktop/Covid-19 Group project/great_icon.png")
     icon_great = icon_great.resize((60, 60), Image.ANTIALIAS)
     icon_great1 = ImageTk.PhotoImage(icon_great)
-    great_btn = Button(frame1, image=icon_great1, text='Great !', relief=FLAT,compound= TOP,font="Helvetica  8 bold")
-    great_btn.grid(row=3, column=1,pady=5)
+    great_btn = Button(frame1, image=icon_great1, text='Great !', relief=FLAT,compound= TOP,font="Helvetica  8 bold",bg="#233D72",fg="white")
+    great_btn.place(rely=0.1525, relx=0.44556)
 
 
     icon_notSure = Image.open("C:/Users/use/Desktop/Covid-19 Group project/notSure_icon.png")
     icon_notSure= icon_notSure.resize((60, 60), Image.ANTIALIAS)
     icon_notSure1 = ImageTk.PhotoImage(icon_notSure)
     notSure_btn = Button(frame1, image=icon_notSure1, text="Not sure", compound= TOP,font="Helvetica  8 bold",relief=FLAT)
-    notSure_btn.grid(row=3, column=2,pady=5)
+    notSure_btn.place(rely=0.375, relx=0.334)
 
-  
+
 
     icon_bad = Image.open("C:/Users/use/Desktop/Covid-19 Group project/bad_icon.png")
     icon_bad = icon_bad.resize((60, 60), Image.ANTIALIAS)
     icon_bad1 = ImageTk.PhotoImage(icon_bad)
     bad_btn = Button(frame1, image=icon_bad1, relief=FLAT, compound=TOP,text=" Bad", font="Helvetica 8 bold")
-    bad_btn.grid(row=3, column=3)
+    bad_btn.place(rely=0.375, relx=0.501)
 
 
     #flags icons
@@ -219,25 +232,25 @@ def home_button():
     icon_kenya = icon_kenya.resize((60,30 ), Image.ANTIALIAS)
     icon_kenya1 = ImageTk.PhotoImage(icon_kenya)
     kenya_btn = Button(frame1, image=icon_kenya1, relief=FLAT, compound=LEFT,text="Kenya today", font="Helvetica 12 bold")
-    kenya_btn.grid(row=4, column=1,columnspan=3)
+    kenya_btn.place(rely=0.5, relx=0.167)
 
     #Kenya stats label
     global label_cases, label_recoveries, label_deaths, label_vaccine
     label_cases = Label(frame1, text="CONFIRMED CASES \n "+ str(api["Kenya"]["All"]["confirmed"]),relief=GROOVE,font="Helvetica 10 bold")
-    label_cases.grid(column=1, row=5,ipadx=25,pady=5,columnspan=3)
+    label_cases.place(relx=0.0835, rely=0.625)
 
     label_recoveries = Label(frame1, text="CONFIRMED RECOVERIES \n "+str(api["Kenya"]["All"]["recovered"]) ,relief=GROOVE,font="Helvetica 10 bold")
-    label_recoveries.grid(column=1, row=6,ipadx=5,columnspan=3)
+    label_recoveries.place(relx=0.167, rely=0.75)
 
     label_deaths = Label(frame1, text="CONFIRMED DEATHS \n "+str(api["Kenya"]["All"]["deaths"]),relief=GROOVE,font="Helvetica 10 bold")
-    label_deaths.grid(column=1, row=7,ipadx=25,pady=5,columnspan=3)
+    label_deaths.place(relx=0.0835, rely=0.875)
 
     label_vaccine = Label(frame1, text="VACCINATION RATE \n"+str(api["Kenya"]["All"]["updated"]),relief=GROOVE,font="Helvetica 10 bold")
-    label_vaccine.grid(column=1, row=8,ipadx=25,pady=5,columnspan=3)
+    label_vaccine.place(relx=0.167, rely=0.9375)
 
 
     #global icon for stats
-        
+
     global icon_global
     global icon_global1
     global global_btn
@@ -246,21 +259,21 @@ def home_button():
     icon_global = icon_global.resize((50,50 ), Image.ANTIALIAS)
     icon_global1 = ImageTk.PhotoImage(icon_global)
     global_btn = Button(frame1, image=icon_global1, relief=FLAT, compound=LEFT,text=" Global Stats", font="Helvetica 12 bold")
-    global_btn.grid(row=4, column=4,columnspan=2)
+    global_btn.place(rely=0.5, relx=0.668)
 
     #global stats
     global label_G_cases, label_G_recoveries, label_G_deaths, label_G_vaccine
     label_G_cases = Label(frame1, text="CONFIRMED CASES \n"+str(api["Global"]["All"]["confirmed"]),relief=GROOVE,font="Helvetica 10 bold")
-    label_G_cases.grid(column=4, row=5,ipadx=25,pady=5)
+    label_G_cases.place(relx=0.501, rely=0.625)
 
     label_G_recoveries = Label(frame1, text="CONFIRMED RECOVERIES \n "+str(api["Global"]["All"]["recovered"]),relief=GROOVE,font="Helvetica 10 bold")
-    label_G_recoveries.grid(column=4, row=6,ipadx=5)
+    label_G_recoveries.place(relx=0.668, rely=0.75)
 
     label_deaths = Label(frame1, text="CONFIRMED DEATHS \n"+str(api["Global"]["All"]["deaths"]),relief=GROOVE,font="Helvetica 10 bold")
-    label_deaths.grid(column=5, row=5,ipadx=25,pady=5)
+    label_deaths.place(relx=0.835, rely=0.625)
 
     label_G_vaccine = Label(frame1, text="VACCINATION RATE \n"+str(api["Global"]["All"]["population"]),relief=GROOVE,font="Helvetica 10 bold")
-    label_G_vaccine.grid(column=5, row=6,ipadx=25,pady=5)
+    label_G_vaccine.place(relx=0.835, rely=0.75)
 
 
     global icon_logOut, icon_logOut1
@@ -269,22 +282,22 @@ def home_button():
     icon_logOut = icon_logOut.resize((50,50 ), Image.ANTIALIAS)
     icon_logOut1 = ImageTk.PhotoImage(icon_logOut)
     logOut_btn = Button(frame1, image=icon_logOut1, relief=FLAT,anchor=E, command=logOut)
-    logOut_btn.grid(row=0, column=6)
+    logOut_btn.place(rely=0.00625, relx=0.9185)
 
 
     #Top stories
     global label_topStories,  btn_topStory1, btn_topStory2, btn_topStory3
     label_topStories = Label(frame1, text="COVID-19 Top Stories ",font="Helvetica 15 bold")
-    label_topStories.grid(column=6, row=1,ipadx=25)
+    label_topStories.place(relx=0.9185, rely=0.125)
 
     btn_topStory1 = Button(frame1, text="TOP STORY 1",relief=GROOVE,font="Helvetica 10 bold")
-    btn_topStory1.grid(column=6, row=2,ipady=5) #,ipadx=10,ipady=20,rowspan=2,sticky=N
+    btn_topStory1.place(relx=0.9185, rely=0.25) #,ipadx=10,ipady=20,relyspan=2,sticky=N
 
     btn_topStory2 = Button(frame1, text="TOP STORY 2",relief=GROOVE,font="Helvetica 10 bold")
-    btn_topStory2.grid(column=6, row=3,ipady=10) #,ipadx=10,ipady=20,rowspan=2,sticky=N
+    btn_topStory2.place(relx=0.9185, rely=0.501) #,ipadx=10,ipady=20,relyspan=2,sticky=N
 
     btn_topStory3 = Button(frame1, text="TOP STORY 3",relief=GROOVE,font="Helvetica 10 bold")
-    btn_topStory3.grid(column=6, row=4) #,ipadx=10,ipady=20,rowspan=2, sticky=N
+    btn_topStory3.place(relx=0.9185, rely=0.5) #,ipadx=10,ipady=20,relyspan=2, sticky=N
 
 
 login_Button = Button(frame, text="Login", command=home_button)
