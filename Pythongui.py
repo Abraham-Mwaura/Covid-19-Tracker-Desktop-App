@@ -1,15 +1,43 @@
+ 
 from tkinter import *
 from PIL import ImageTk, Image
 from tkinter import messagebox
-
+#import webbrowser
 # these are for the api
 import requests
 import json
+import pyrebase 
+
+Config = {
+    "apiKey": "AIzaSyDusq6Crtup5gEtC7uTvtMtkDZjuJorQQc",
+    "authDomain": "covid-19-group-project.firebaseapp.com",
+    "databaseURL": "https://covid-19-group-project-default-rtdb.firebaseio.com",
+    "projectId": "covid-19-group-project",
+    "storageBucket": "covid-19-group-project.appspot.com",
+    "messagingSenderId": "320687700566",
+    "appId": "1:320687700566:web:2b18881b3850ae72b6d9f7",
+    "measurementId": "G-PNJPHDFBMC"
+  }
+
+  # Initialize Firebase
+firebase= pyrebase.initialize_app(Config)
+db = firebase.database()
+
+thankGod= db.child("Story1").child("link").get()
 
 
+print(thankGod.val())
+# news_variables = [1,2,3]
+
+
+# for index,  var in enumerate(news_variables):
+    #  news_variables[index]=thankGod.val()
+     
 # creating an instance of root
 root = Tk()
 root.title("Covid1-19 Tracker and predictions")
+
+root.iconbitmap("C:/Users/use/Desktop/Covid-19 Group project/logo_icon.ico")
 root.geometry("1000x700")
 
 
@@ -321,18 +349,46 @@ def home_button():
 
     btn_topStory1 = Button(frame1, text="TOP STORY 1",
                            relief=GROOVE, font="Helvetica 10 bold")
-    # ,ipadx=10,ipady=20,relyspan=2,sticky=N
-    btn_topStory1.place(relx=0.9185, rely=0.25)
+ 
+    btn_topStory1.place(relx=0.8625, rely=0.2222)
 
     btn_topStory2 = Button(frame1, text="TOP STORY 2",
                            relief=GROOVE, font="Helvetica 10 bold")
-    # ,ipadx=10,ipady=20,relyspan=2,sticky=N
-    btn_topStory2.place(relx=0.9185, rely=0.501)
+  
+    btn_topStory2.place(relx=0.8625, rely=0.30556)
 
     btn_topStory3 = Button(frame1, text="TOP STORY 3",
                            relief=GROOVE, font="Helvetica 10 bold")
     # ,ipadx=10,ipady=20,relyspan=2, sticky=N
-    btn_topStory3.place(relx=0.9185, rely=0.5)
+    btn_topStory3.place(relx=0.8625, rely=0.3889)
+
+    btn_topStory4 = Button(frame1, text="TOP STORY 4",
+                           relief=GROOVE, font="Helvetica 10 bold")
+    # ,ipadx=10,ipady=20,relyspan=2, sticky=N
+    btn_topStory4.place(relx=0.8625, rely=0.4722)
+
+    btn_topStory5 = Button(frame1, text="TOP STORY 5",
+                           relief=GROOVE, font="Helvetica 10 bold")
+    # ,ipadx=10,ipady=20,relyspan=2, sticky=N
+    btn_topStory5.place(relx=0.8625, rely=0.5556)
+
+    btn_topStory6 = Button(frame1, text="TOP STORY 6",
+                           relief=GROOVE, font="Helvetica 10 bold")
+    # ,ipadx=10,ipady=20,relyspan=2, sticky=N
+    btn_topStory6.place(relx=0.8625, rely=0.6389)
+
+    btn_topStory7 = Button(frame1, text="TOP STORY 7",
+                           relief=GROOVE, font="Helvetica 10 bold")
+    # ,ipadx=10,ipady=20,relyspan=2, sticky=N
+    btn_topStory7.place(relx=0.8625, rely=0.7222)
+
+
+
+
+    status_label= Label(frame1,
+     text="LAST UPDATED ON "+str(
+        api["Kenya"]["All"]["updated"]),relief=GROOVE)
+    status_label.place(relx=0.00001, rely=0.98,relwidth=1)
 
 
 login_Button = Button(frame, text="Login", command=home_button)
@@ -390,18 +446,18 @@ sign_Button.grid(column=1, row=12, sticky='NSEW')
 
 # Give all rows and columns a non-zero weight
 # this helps the program to resize well
-frame.grid_columnconfigure(0, weight=1)
-frame.grid_columnconfigure(1, weight=1)
-frame.grid_columnconfigure(2, weight=1)
-frame.grid_rowconfigure(0, weight=1)
-frame.grid_rowconfigure(1, weight=1)
+# frame.grid_columnconfigure(0, weight=1)
+# frame.grid_columnconfigure(1, weight=1)
+# frame.grid_columnconfigure(2, weight=1)
+# frame.grid_rowconfigure(0, weight=1)
+# frame.grid_rowconfigure(1, weight=1)
 
 
 # THE LABEL PASSWORD BELOW ARE FOR SPACING PURPOSES
 label_password = Label(frame, anchor=W)
 
 label_password.grid(row=14, column=1, sticky='NSEW')
-label_password = Label(frame, anchor=W)
-label_password.grid(row=15, column=1, sticky='NSEW')
+
+
 
 root.mainloop()
