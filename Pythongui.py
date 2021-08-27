@@ -390,22 +390,32 @@ def home_button():
                             text=" Global Stats", font="Helvetica 12 bold", bg="#A8CBE6")
         global_btn.place(rely=0.4998, relx=0.610)
 
+        myCursor.execute("SELECT * FROM live_cases where Country='global'")
+        myresult3 = myCursor.fetchall()
+        global globalCases, globalDeaths, globalDate
+
+        globalCases = myresult3[0][1]
+        globalDeaths = myresult3[0][2]
+        globalDate = myresult3[0][3]
+        print(globalCases)
+        print(globalDeaths)
+
         #global stats
         global label_G_cases, label_G_recoveries, label_G_deaths, label_G_vaccine
-        label_G_cases = Label(frame1, text="CONFIRMED CASES \n"+str(
-            api["Global"]["All"]["confirmed"]), relief=GROOVE, font="Helvetica 10 bold")
+        label_G_cases = Label(frame1, text="CONFIRMED CASES \n" +
+                              globalCases, relief=GROOVE, font="Helvetica 10 bold")
         label_G_cases.place(relx=0.563, rely=0.6)
 
-        label_G_recoveries = Label(frame1, text="CONFIRMED RECOVERIES \n "+str(
-            api["Global"]["All"]["recovered"]), relief=GROOVE, font="Helvetica 10 bold")
+        label_G_recoveries = Label(
+            frame1, text="CONFIRMED RECOVERIES \n ", relief=GROOVE, font="Helvetica 10 bold")
         label_G_recoveries.place(relx=0.697, rely=0.6)
 
-        label_deaths = Label(frame1, text="CONFIRMED DEATHS \n"+str(
-            api["Global"]["All"]["deaths"]), relief=GROOVE, font="Helvetica 10 bold")
+        label_deaths = Label(frame1, text="CONFIRMED DEATHS \n" +
+                             globalDeaths, relief=GROOVE, font="Helvetica 10 bold")
         label_deaths.place(relx=0.563, rely=0.688)
 
-        label_G_vaccine = Label(frame1, text="VACCINATION RATE \n"+str(
-            api["Global"]["All"]["population"]), relief=GROOVE, font="Helvetica 10 bold")
+        label_G_vaccine = Label(frame1, text="VACCINATION RATE \n" +
+                                globalDate, relief=GROOVE, font="Helvetica 10 bold")
         label_G_vaccine.place(relx=0.697, rely=0.688)
 
         global icon_logOut, icon_logOut1
@@ -470,9 +480,42 @@ def home_button():
 
     topStories()
 
+    def search(country):
+        global myresult
+
+        Label(root, text="Total Confirmed Cases").place(x=10, y=80)
+        Label(root, text="Total Deaths").place(x=10, y=120)
+
+        e2 = Label(root)
+        e2.place(x=140, y=80)
+
+        e3 = Label(root)
+        e3.place(x=140, y=120)
+        try:
+            myCursor.execute(
+                "SELECT * FROM live_cases where Country= '" + country + "'")
+
+            myresult1 = myCursor.fetchall()
+            print(myresult1)
+
+            e2.delete(0, END)
+            e2.insert(END, myresult1[0][1])
+            e3.delete(0, END)
+            e3.insert(END, myresult1[0][2])
+        except Exception as e:
+            print(e)
+            myDb.rollback()
+            myDb.close()
+
+    e1 = Entry(frame1)
+    e1.place(rex=0.547, rely=0.206)
+    Label(root, text="Enter The Country").place(relx=0.657, rely=0.206)
+    country = e1.get()
+    Button(root, text="Search", command=lambda: search(country),
+           height=1, width=15).place(relx=0.547, rely=0.306)
+
     status_label = Label(frame1,
-                         text="LAST UPDATED ON "+str(
-                             api["Kenya"]["All"]["updated"]), relief=GROOVE)
+                         text="LAST UPDATED ON ", relief=GROOVE)
     status_label.place(relx=0.00001, rely=0.98, relwidth=1)
 
 
