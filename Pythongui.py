@@ -1,12 +1,8 @@
 # Introduce a login button function
-# use .forget method to move around the frames.
-
 from threading import Timer
 from tkinter import *
 from PIL import ImageTk, Image
 from tkinter import messagebox
-#import webbrowser
-# these are for the api
 import pandas as pd
 import requests
 import json
@@ -15,19 +11,15 @@ import webbrowser
 import mysql.connector
 from sqlalchemy import create_engine
 
-
 # a function to extract data from a[i,convert it into a dictonary first,convert the
 # dictionary into a dataframe and enter the dataframe contents in a mysql table
 def get_data():
-    # using requests library to make a request from url and save the apidata object's
-    # text under variable apidata
-
     apidata = requests.get("https://api.covid19api.com/summary").text
     # loading the string into python and converting it into
     apidata_info = json.loads(apidata)
 
     # parsing through the dictionary and extracting the info we need
-# looping through the list of dictionaries and extracting the values of confirmed and deaths
+    # looping through the list of dictionaries and extracting the values of confirmed and deaths
     country_list = []
     for country_info in apidata_info['Countries']:
         country_list.append([country_info['Country'], country_info['TotalConfirmed'],
@@ -43,14 +35,12 @@ def get_data():
     country_df.head()
 
     mycursor1 = myDb.cursor()
-    # should not be executed in the 1st instance
     mycursor1.execute("DROP TABLE live_cases")
     mycursor1.execute(
         "CREATE TABLE live_cases(Country VARCHAR(255),TotalConfirmed VARCHAR(255),TotalDeaths VARCHAR(255),Date VARCHAR(255))")
     my_conn = create_engine("mysql+mysqldb://root:root@localhost/users")
     country_df.to_sql(con=my_conn, name='live_cases',
                       if_exists='append', index=False)
-
 
 myDb = mysql.connector.connect(  # connecting to database
     host="127.0.0.1",
@@ -63,14 +53,9 @@ myCursor = myDb.cursor()
 
 t = Timer(5.0, get_data)
 t.start()
+#this line of code is run on the 1st instance of the code
 #myCursor.execute( "CREATE DATABASE users ")
-
-
 #myCursor.execute("CREATE TABLE userinfo(firstname VARCHAR(30),secondname VARCHAR(30),username VARCHAR(30),email VARCHAR(30),password VARCHAR(30))")
-
-# print(myDb)
-
-
 Config = {
     "apiKey": "AIzaSyDusq6Crtup5gEtC7uTvtMtkDZjuJorQQc",
     "authDomain": "covid-19-group-project.firebaseapp.com",
@@ -85,7 +70,7 @@ Config = {
 firebase = pyrebase.initialize_app(Config)
 db = firebase.database()
 
-
+#create the first instance of the screen
 root = Tk()
 root.title("Covid1-19 Tracker and predictions")
 root.iconbitmap("C:/Users/use/Desktop/Covid-19 Group project/logo_icon.ico")
@@ -95,15 +80,6 @@ root.geometry("1000x700")
 # creating the first frame
 frame = Frame(root)
 frame.grid(row=0, column=0, sticky=N+S+W+E)
-
-# fetch data from api
-# try:
-#     api_request = requests.get("https://covid-api.mmediagroup.fr/v1/cases")
-#     # converts the Data into a json file
-#     api = json.loads(api_request.text)
-# except Exception as e:
-#     api = "Error"
-
 
 # mounting the image on the frame
 my_img = ImageTk.PhotoImage(Image.open("enlightened.ico"))
@@ -136,12 +112,15 @@ def global_window():
         frame_globe, text="This is the global Data Window", font="Helvetica  25 bold", padx=100)
     globe_welcome_Label.grid(column=1, row=0)
 
+    def globalWindowQuit():
+        frame_globe.place_forget()
+
     icon_backHome = Image.open(
         "C:/Users/use/Desktop/Covid-19 Group project/backHome_icon.png")
     icon_backHome = icon_backHome.resize((70, 50), Image.ANTIALIAS)
     icon_backHome1 = ImageTk.PhotoImage(icon_backHome)
     backHome_btn = Button(frame_globe, image=icon_backHome1,
-                          relief=RAISED, command=frame_globe.place_forget())
+                          relief=RAISED, command=globalWindowQuit)
     backHome_btn.grid(row=0, column=0, pady=5)
 
 
@@ -157,12 +136,15 @@ def yourHealth_window():
         frame_health, text="This is the Customers Health Window", font="Helvetica  25 bold", padx=100)
     health_welcLabel.grid(column=1, row=0)
 
+    def HealthWindowQuit():
+        frame_health.place_forget()
+
     icon_backHome = Image.open(
         "C:/Users/use/Desktop/Covid-19 Group project/backHome_icon.png")
     icon_backHome = icon_backHome.resize((70, 50), Image.ANTIALIAS)
     icon_backHome1 = ImageTk.PhotoImage(icon_backHome)
     backHome_btn = Button(frame_health, image=icon_backHome1,
-                          relief=RAISED, command=home_button)
+                          relief=RAISED, command=HealthWindowQuit)
     backHome_btn.grid(row=0, column=0, pady=5)
 
 
@@ -178,12 +160,15 @@ def yourInfo_window():
         frame_info, text="This is the Customers Personal Information Window", font="Helvetica  25 bold", padx=100)
     info_welcLabel.grid(column=1, row=0)
 
+    def infoWindowQuit():
+        frame_info.place_forget()
+
     icon_backHome = Image.open(
         "C:/Users/use/Desktop/Covid-19 Group project/backHome_icon.png")
     icon_backHome = icon_backHome.resize((70, 50), Image.ANTIALIAS)
     icon_backHome1 = ImageTk.PhotoImage(icon_backHome)
     backHome_btn = Button(frame_info, image=icon_backHome1,
-                          relief=RAISED, command=home_button)
+                          relief=RAISED, command=infoWindowQuit)
     backHome_btn.grid(row=0, column=0, pady=5)
 
 
@@ -199,12 +184,15 @@ def developer_window():
         frame_dev, text="We like coding, coding is the best thing that happened to us", font="Helvetica  25 bold", padx=100)
     dev_welcLabel.grid(column=1, row=0)
 
+    def devWindowQuit():
+        frame_dev.place_forget()
+
     icon_backHome = Image.open(
         "C:/Users/use/Desktop/Covid-19 Group project/backHome_icon.png")
     icon_backHome = icon_backHome.resize((70, 50), Image.ANTIALIAS)
     icon_backHome1 = ImageTk.PhotoImage(icon_backHome)
     backHome_btn = Button(frame_dev, image=icon_backHome1,
-                          relief=RAISED, command=home_button)
+                          relief=RAISED, command=devWindowQuit)
     backHome_btn.grid(row=0, column=0, pady=5)
 
 
@@ -480,38 +468,41 @@ def home_button():
 
     topStories()
 
-    def search(country):
-        global myresult
-
-        Label(root, text="Total Confirmed Cases").place(x=10, y=80)
-        Label(root, text="Total Deaths").place(x=10, y=120)
-
-        e2 = Label(root)
-        e2.place(x=140, y=80)
-
-        e3 = Label(root)
-        e3.place(x=140, y=120)
+    def search():
         try:
             myCursor.execute(
-                "SELECT * FROM live_cases where Country= '" + country + "'")
-
+                "SELECT * FROM live_cases where Country= '" + e1.get() + "'")
+            e1.delete(0,END)
             myresult1 = myCursor.fetchall()
             print(myresult1)
+            global myresult, var_ConfirmedCases, var_confirmedDeaths
 
-            e2.delete(0, END)
-            e2.insert(END, myresult1[0][1])
-            e3.delete(0, END)
-            e3.insert(END, myresult1[0][2])
+            Label(frame1, text="Total Confirmed Cases").place(x=10, y=80)
+            Label(frame1, text="Total Deaths").place(x=10, y=120)
+
+            var_ConfirmedCases = myresult1[0][1]
+            var_confirmedDeaths = myresult1[0][2]
+            global e2, e3
+            
+            e2 = Label(frame1, text=var_ConfirmedCases)
+            e2.place(x=140, y=80)
+            
+            e3 = Label(frame1, text=var_confirmedDeaths)
+            e3.place(x=140, y=120)
+
         except Exception as e:
             print(e)
             myDb.rollback()
             myDb.close()
 
+    global e1,country
     e1 = Entry(frame1)
-    e1.place(rex=0.547, rely=0.206)
-    Label(root, text="Enter The Country").place(relx=0.657, rely=0.206)
-    country = e1.get()
-    Button(root, text="Search", command=lambda: search(country),
+    e1.place(relx=0.547, rely=0.206)
+    Label(frame1, text="Enter The Country").place(relx=0.657, rely=0.206)
+    #country = e1.get()
+    
+    # print(country)
+    Button(frame1, text="Search", command=search,
            height=1, width=15).place(relx=0.547, rely=0.306)
 
     status_label = Label(frame1,
@@ -530,6 +521,8 @@ def login():
     results = myCursor.fetchall()
     if results:
         for i in results:
+            enter_passwordl.delete(0, END)
+            enter_usernamel.delete(0, END)
             print(results)
             home_button()  # if credentials are correct,the function logged is executed
             # break
@@ -550,21 +543,15 @@ def sign_up():
     global signUp
     signUp = Frame(root)
     signUp.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
-    # signUp.title("Sign-up Window")
-    # signUp.iconbitmap(
-    #     "C:/Users/use/Desktop/Covid-19 Group project/enlightened.ico")
-
-    # # this is the size of the window
-    # signUp.geometry("450x450")
 
     def submit():
         if(enter_password1.get() == enter_password2.get()):
             # inserting records entered in the form into the database
             myCursor.execute("INSERT INTO userinfo VALUES('%s','%s','%s','%s','%s')" % (enter_firstname.get(), enter_secondname.get(), enter_username.get(),
                                                                                         enter_email.get(), enter_password2.get()))
-        # committing changes made in the database
+            #committing changes made in the database
             myDb.commit()
-        # deleting records entered into the entry boxes after inserting them into mysql table
+            #deleting records entered into the entry boxes after inserting them into mysql table
             enter_firstname.delete(0, END)
             enter_secondname.delete(0, END)
             enter_username.delete(0, END)
@@ -574,6 +561,7 @@ def sign_up():
 
             signUp.place_forget()
         else:
+            #when the password do not match with any in the record.
             messagebox.showwarning(
                 title="password", message="Password do not match")
 
@@ -621,21 +609,6 @@ def quit():
 
 sign_Button = Button(frame, text="Sign Up", command=sign_up)
 sign_Button.grid(column=1, row=12, sticky='NSEW')
-
-
-# Give all rows and columns a non-zero weight
-# this helps the program to resize well
-# frame.grid_columnconfigure(0, weight=1)
-# frame.grid_columnconfigure(1, weight=1)
-# frame.grid_columnconfigure(2, weight=1)
-# frame.grid_rowconfigure(0, weight=1)
-# frame.grid_rowconfigure(1, weight=1)
-
-
-# # THE LABEL PASSWORD BELOW ARE FOR SPACING PURPOSES
-# label_password = Label(frame, anchor=W)
-
-# label_password.grid(row=14, column=1, sticky='NSEW')
 
 
 root.mainloop()
