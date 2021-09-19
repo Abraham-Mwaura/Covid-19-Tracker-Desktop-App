@@ -1,6 +1,7 @@
 from os import name
 from threading import Timer
 from tkinter import *
+from tkinter import font
 from PIL import ImageTk, Image
 from tkinter import messagebox
 import pandas as pd
@@ -16,6 +17,7 @@ from tkinter import ttk
 from tkinter.font import BOLD
 
 from sqlalchemy.engine import result
+from sqlalchemy.sql.expression import label, text
 
 #from tooltip import ToolTip
 #from tkinter.constants import BOTH
@@ -100,8 +102,9 @@ root.title("Covid1-19 Tracker and predictions")
 root.iconbitmap(
     "C:/Users/use/Desktop/Covid-19 Group project/images/logo_icon.ico")
 # The initial set size for our app
-#
-root.geometry("1600x900")
+#root.geometry("1600x900")
+root.state('zoomed') 
+#root.attributes('-fullscreen', True)
 
 
 # creating the first frame
@@ -110,6 +113,8 @@ frame = Frame(root)
 frame.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
 
 # mounting the image on the frame
+Label(frame, text="Wash your hands, sanitize & Observe social distancing ", fg="#2E8BC0", font= 'helvetica 15 bold').place(relx= 0.32, rely=0.1)
+
 my_img = ImageTk.PhotoImage(Image.open("images/logo_icon.ico"))
 my_icon = Label(frame, image=my_img)
 my_icon.place(rely=0.18148, relx=0.27, relheight=0.333, relwidth=0.1875)
@@ -943,6 +948,8 @@ def sign_up():
     signUp = Frame(root)
     signUp.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
 
+    Label(signUp, text="Wash your hands, sanitize & Observe social distancing ", fg="#2E8BC0", font= 'helvetica 15 bold').place(relx= 0.32, rely=0.085)
+
     def submit():
         if(enter_password1.get() == enter_password2.get()):
             # inserting records entered in the form into the database
@@ -965,41 +972,41 @@ def sign_up():
                 title="password", message="Password do not match")
 
     label_CreateAccount = Label(
-        signUp, text="Create account", font="Helvetica  18 bold")
-    label_CreateAccount.grid(row=1, column=1, sticky='NSEW', padx=5, pady=10)
+        signUp, text="Create account", font="Helvetica  20 bold")
+    label_CreateAccount.place(relx=0.38, rely=0.123)
 
-    label_firstname = Label(signUp, text="First name", anchor=CENTER)
-    label_firstname.grid(row=2, column=1, sticky='NSEW', padx=5, pady=5)
-    enter_firstname = Entry(signUp, width=30)
-    enter_firstname .grid(row=2, column=2, sticky='NSEW', padx=5, pady=5)
+    label_firstname = Label(signUp, text="First name", anchor=CENTER, font= "helvetica 15 bold")
+    label_firstname.place(relx=0.41, rely=0.173)
+    enter_firstname = Entry(signUp, width=30, font=15)
+    enter_firstname .place(relx=0.38, rely=0.223)
 
-    label_secondname = Label(signUp, text="Second name")
-    label_secondname.grid(row=3, column=1, sticky='NSEW', padx=5, pady=5)
-    enter_secondname = Entry(signUp, width=30)
-    enter_secondname .grid(row=3, column=2, sticky='NSEW', padx=5, pady=5)
+    label_secondname = Label(signUp, text="Second name", anchor=CENTER, font= "helvetica 15 bold")
+    label_secondname.place(relx=0.41, rely=0.273)
+    enter_secondname = Entry(signUp, width=30,font=15)
+    enter_secondname .place(relx=0.38, rely=0.323)
 
-    label_username = Label(signUp, text="username")
-    label_username.grid(row=4, column=1, sticky='NSEW', padx=5, pady=5)
-    enter_username = Entry(signUp, width=30)
-    enter_username .grid(row=4, column=2, sticky='NSEW',  padx=5, pady=5)
+    label_username = Label(signUp, text="username", anchor=CENTER, font= "helvetica 15 bold")
+    label_username.place(relx=0.41, rely=0.373)
+    enter_username = Entry(signUp, width=30,font=15)
+    enter_username .place(relx=0.38, rely=0.423)
 
-    label_email = Label(signUp, text="Email address")
-    label_email.grid(row=5, column=1, sticky='NSEW', padx=5, pady=5)
-    enter_email = Entry(signUp, width=30)
-    enter_email .grid(row=5, column=2, sticky='NSEW ', padx=5, pady=5)
+    label_email = Label(signUp, text="Email address", anchor=CENTER, font= "helvetica 15 bold")
+    label_email.place(relx=0.41, rely=0.473)
+    enter_email = Entry(signUp, width=30,font=15)
+    enter_email.place(relx=0.38, rely=0.523)
 
-    label_password1 = Label(signUp, text="Password")
-    label_password1.grid(row=6, column=1, sticky='NSEW', padx=5, pady=5)
-    enter_password1 = Entry(signUp, width=30)
-    enter_password1 .grid(row=6, column=2, sticky='NSEW', padx=5, pady=5)
+    label_password1 = Label(signUp, text="Password", anchor=CENTER, font= "helvetica 15 bold")
+    label_password1.place(relx=0.41, rely=0.573)
+    enter_password1 = Entry(signUp, width=30,font=15)
+    enter_password1 .place(relx=0.38, rely=0.623)
 
-    label_password2 = Label(signUp, text="Password")
-    label_password2.grid(row=7, column=1, sticky='NSEW', padx=5, pady=5)
-    enter_password2 = Entry(signUp, width=30)
-    enter_password2 .grid(row=7, column=2, sticky='NSEW', padx=5, pady=5)
+    label_password2 = Label(signUp, text=" Confirm Password", anchor=CENTER, font= "helvetica 15 bold")
+    label_password2.place(relx=0.41, rely=0.673)
+    enter_password2 = Entry(signUp, width=30,font=15)
+    enter_password2 .place(relx=0.38, rely=0.723)
 
-    submit_Button = Button(signUp, text="Submit", command=submit)
-    submit_Button.grid(column=1, row=10, padx=5, pady=5, sticky=NSEW)
+    submit_Button = Button(signUp, text="Submit", command=submit, anchor=CENTER, font= "helvetica 15 bold")
+    submit_Button.place(relx=0.41, rely=0.823)
 
 
 sign_Button = Button(frame, text="Sign Up",
