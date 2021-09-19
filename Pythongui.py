@@ -13,7 +13,7 @@ import serial
 import time
 from tkinter import ttk 
 
-from tooltip import ToolTip
+#from tooltip import ToolTip
 #from tkinter.constants import BOTH
 
 
@@ -90,7 +90,7 @@ root = Tk()
 #This is the title for our app
 root.title("Covid1-19 Tracker and predictions")
 #App logo
-root.iconbitmap("C:/Users/use/Desktop/Covid-19 Group project/logo_icon.ico")
+root.iconbitmap("C:/Users/use/Desktop/Covid-19 Group project/images/logo_icon.ico")
 #The initial set size for our app
 #
 root.geometry("1600x900")
@@ -102,7 +102,7 @@ frame = Frame(root)
 frame.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
 
 # mounting the image on the frame
-my_img = ImageTk.PhotoImage(Image.open("logo_icon.ico"))
+my_img = ImageTk.PhotoImage(Image.open("images/logo_icon.ico"))
 my_icon = Label(frame, image=my_img)
 my_icon.place(rely=0.18148, relx=0.3,relheight=0.333,relwidth=0.1875)
 
@@ -132,12 +132,12 @@ def global_window():
     frame.forget()
 
     icon_world= Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/world.jpg")
+            "C:/Users/use/Desktop/Covid-19 Group project/images/world.jpg")
     icon_world = icon_world.resize((1600, 900), Image.ANTIALIAS)
     icon_world1 = ImageTk.PhotoImage(icon_world)
     world_label = Label(frame_globe, image=icon_world1)
     world_label.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
-    ToolTip(widget=world_label, text="This is the world data")
+    
 
 
     #using treeview to display the data from the data  from the database
@@ -181,7 +181,7 @@ def global_window():
         frame_globe.place_forget()
 
     icon_backHome = Image.open(
-        "C:/Users/use/Desktop/Covid-19 Group project/backHome_icon.png")
+        "C:/Users/use/Desktop/Covid-19 Group project/images/backHome_icon.png")
     icon_backHome = icon_backHome.resize((70, 50), Image.ANTIALIAS)
     icon_backHome1 = ImageTk.PhotoImage(icon_backHome)
     backHome_btn = Button(frame_globe, image=icon_backHome1,
@@ -205,7 +205,7 @@ def yourHealth_window():
         frame_health.place_forget()
 
     icon_backHome = Image.open(
-        "C:/Users/use/Desktop/Covid-19 Group project/backHome_icon.png")
+        "C:/Users/use/Desktop/Covid-19 Group project/images/backHome_icon.png")
     icon_backHome = icon_backHome.resize((70, 50), Image.ANTIALIAS)
     icon_backHome1 = ImageTk.PhotoImage(icon_backHome)
     backHome_btn = Button(frame_health, image=icon_backHome1,
@@ -268,47 +268,47 @@ def yourHealth_window():
     measureTemp_Btn.grid(column=3, row=3)
 
 
-        "has patient been in contact with a confirmed COVID-19 patient\n"
-        ans=input("has patient traveled from a country declared as a hotspot zone\n")
+        # "has patient been in contact with a confirmed COVID-19 patient\n"
+        # ans=input("has patient traveled from a country declared as a hotspot zone\n")
 
-        ans=input("Does patient have asthma, chronic bronchitis, pulmonary hypertension,diabetes, sickle cell anaemia, chronic liver or kidney disease?\n")
-        if ans=='yes':
+        # ans=input("Does patient have asthma, chronic bronchitis, pulmonary hypertension,diabetes, sickle cell anaemia, chronic liver or kidney disease?\n")
+        # if ans=='yes':
 
-        ans=input("Is patient living in a town declared as Covid-19  hotspot zone?\n")
+        # ans=input("Is patient living in a town declared as Covid-19  hotspot zone?\n")
 
-        ans=input("Has patient been vaccinated\n")
-
-
-
-
-        ans=input("Does patient have a temperature higher than 38°c?\n")
-
-        ans=input("Does patient have chest pain or pressure\n")
-
-        ans=input("Does patient have trouble breathing?\n")
-
-        ans=input("Is  Patient experiencing loss of speech or movement?\n"
-
-        print("severe symptoms percentage= ",s,"%")
+        # ans=input("Has patient been vaccinated\n")
 
 
 
-        ans=input("Does patient have a fever?\n")
 
-        ans=input("Does patient have a dry cough?\n") 
+        # ans=input("Does patient have a temperature higher than 38°c?\n")
 
-        ans=input("Does patient have a running nose?\n")
+        # ans=input("Does patient have chest pain or pressure\n")
 
-        ans=input("Is patient experiencing loss of smell or taste?\n")
-        ans=input("Does patient have a sore throat?\n")
+        # ans=input("Does patient have trouble breathing?\n")
 
-        ans=input("Does patient have a headache?\n"
+        # ans=input("Is  Patient experiencing loss of speech or movement?\n"
 
-        ans=input("Is patient experiencing loss of appetite?\n")
-        ans=input("Is patient experiencing fatigue?\n")
-        ans=input("Does patient have diarrhea?\n")
+        # print("severe symptoms percentage= ",s,"%")
 
-        ans=input("Does patient have muscle or joint pain\n")
+
+
+        # ans=input("Does patient have a fever?\n")
+
+        # ans=input("Does patient have a dry cough?\n") 
+
+        # ans=input("Does patient have a running nose?\n")
+
+        # ans=input("Is patient experiencing loss of smell or taste?\n")
+        # ans=input("Does patient have a sore throat?\n")
+
+        # ans=input("Does patient have a headache?\n"
+
+        # ans=input("Is patient experiencing loss of appetite?\n")
+        # ans=input("Is patient experiencing fatigue?\n")
+        # ans=input("Does patient have diarrhea?\n")
+
+        # ans=input("Does patient have muscle or joint pain\n")
 
 
 
@@ -332,7 +332,7 @@ def yourInfo_window():
         frame_info.place_forget()
 
     icon_backHome = Image.open(
-        "C:/Users/use/Desktop/Covid-19 Group project/backHome_icon.png")
+        "C:/Users/use/Desktop/Covid-19 Group project/images/backHome_icon.png")
     icon_backHome = icon_backHome.resize((70, 50), Image.ANTIALIAS)
     icon_backHome1 = ImageTk.PhotoImage(icon_backHome)
     backHome_btn = Button(frame_info, image=icon_backHome1,
@@ -356,7 +356,7 @@ def developer_window():
         frame_dev.place_forget()
 
     icon_backHome = Image.open(
-        "C:/Users/use/Desktop/Covid-19 Group project/backHome_icon.png")
+        "C:/Users/use/Desktop/Covid-19 Group project/images/backHome_icon.png")
     icon_backHome = icon_backHome.resize((70, 50), Image.ANTIALIAS)
     icon_backHome1 = ImageTk.PhotoImage(icon_backHome)
     backHome_btn = Button(frame_dev, image=icon_backHome1,
@@ -416,7 +416,7 @@ def home_button():
         global icon_menu1, icon_globe1, icon_programmer1, icon_heartbeat1, icon_info1, icon_bg1
 
         icon_bg = Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/bg_icon.png")
+            "C:/Users/use/Desktop/Covid-19 Group project/images/bg_icon.png")
         icon_bg = icon_bg.resize((1600, 900), Image.ANTIALIAS)
         icon_bg1 = ImageTk.PhotoImage(icon_bg)
         bg_label = Label(frame1, image=icon_bg1)
@@ -424,14 +424,14 @@ def home_button():
 
         # antialias is used to resize here
         icon_menu = Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/menu_icon.png")
+            "C:/Users/use/Desktop/Covid-19 Group project/images/menu_icon.png")
         icon_menu = icon_menu.resize((50, 50), Image.ANTIALIAS)
         icon_menu1 = ImageTk.PhotoImage(icon_menu)
         menu_btn = Button(frame1, image=icon_menu1, relief=RAISED)
         menu_btn.place(rely=0.00625, relx=0.00625)
 
         icon_globe = Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/globe_icon.png")
+            "C:/Users/use/Desktop/Covid-19 Group project/images/globe_icon.png")
         icon_globe = icon_globe.resize((50, 50), Image.ANTIALIAS)
         icon_globe1 = ImageTk.PhotoImage(icon_globe)
         globe_btn = Button(frame1, image=icon_globe1,
@@ -439,7 +439,7 @@ def home_button():
         globe_btn.place(rely=0.125, relx=0.00625)
 
         icon_heartbeat = Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/heartbeat_icon.png")
+            "C:/Users/use/Desktop/Covid-19 Group project/images/heartbeat_icon.png")
         icon_heartbeat = icon_heartbeat.resize((50, 50), Image.ANTIALIAS)
         icon_heartbeat1 = ImageTk.PhotoImage(icon_heartbeat)
         heartbeat_btn = Button(frame1, image=icon_heartbeat1,
@@ -447,7 +447,7 @@ def home_button():
         heartbeat_btn.place(rely=0.25, relx=0.00625)
 
         icon_info = Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/info_icon.png")
+            "C:/Users/use/Desktop/Covid-19 Group project/images/info_icon.png")
         icon_info = icon_info.resize((50, 50), Image.ANTIALIAS)
         icon_info1 = ImageTk.PhotoImage(icon_info)
         info_btn = Button(frame1, image=icon_info1,
@@ -455,7 +455,7 @@ def home_button():
         info_btn.place(rely=0.375, relx=0.00625)
 
         icon_programmer = Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/programmer_icon.png")
+            "C:/Users/use/Desktop/Covid-19 Group project/images/programmer_icon.png")
         icon_programmer = icon_programmer.resize((50, 50), Image.ANTIALIAS)
         icon_programmer1 = ImageTk.PhotoImage(icon_programmer)
         programmer_btn = Button(frame1, image=icon_programmer1,
@@ -482,7 +482,7 @@ def home_button():
         global icon_great1, icon_bad1, icon_notSure1
 
         icon_great = Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/great_icon.png")
+            "C:/Users/use/Desktop/Covid-19 Group project/images/great_icon.png")
         icon_great = icon_great.resize((60, 60), Image.ANTIALIAS)
         icon_great1 = ImageTk.PhotoImage(icon_great)
         great_btn = Button(frame1, image=icon_great1, text='Great !', relief=FLAT,
@@ -490,7 +490,7 @@ def home_button():
         great_btn.place(rely=0.3, relx=0.06375)
 
         icon_notSure = Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/notSure_icon.png")
+            "C:/Users/use/Desktop/Covid-19 Group project/images/notSure_icon.png")
         icon_notSure = icon_notSure.resize((60, 60), Image.ANTIALIAS)
         icon_notSure1 = ImageTk.PhotoImage(icon_notSure)
         notSure_btn = Button(frame1, image=icon_notSure1, text="Not sure", compound=TOP,
@@ -498,7 +498,7 @@ def home_button():
         notSure_btn.place(rely=0.3, relx=0.14126)
 
         icon_bad = Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/bad_icon.png")
+            "C:/Users/use/Desktop/Covid-19 Group project/images/bad_icon.png")
         icon_bad = icon_bad.resize((60, 60), Image.ANTIALIAS)
         icon_bad1 = ImageTk.PhotoImage(icon_bad)
         bad_btn = Button(frame1, image=icon_bad1, relief=FLAT, compound=TOP,
@@ -513,7 +513,7 @@ def home_button():
         global kenya_btn
 
         icon_kenya = Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/kenya_icon.png")
+            "C:/Users/use/Desktop/Covid-19 Group project/images/kenya_icon.png")
         icon_kenya = icon_kenya.resize((60, 30), Image.ANTIALIAS)
         icon_kenya1 = ImageTk.PhotoImage(icon_kenya)
         kenya_btn = Button(frame1, image=icon_kenya1, relief=FLAT, compound=LEFT,
@@ -558,7 +558,7 @@ def home_button():
         global global_btn
 
         icon_global = Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/global_icon.png")
+            "C:/Users/use/Desktop/Covid-19 Group project/images/global_icon.png")
         icon_global = icon_global.resize((50, 50), Image.ANTIALIAS)
         icon_global1 = ImageTk.PhotoImage(icon_global)
         global_btn = Button(frame1, image=icon_global1, relief=FLAT, compound=LEFT,
@@ -596,7 +596,7 @@ def home_button():
         global icon_logOut, icon_logOut1
         global logOut_btn
         icon_logOut = Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/logOut_icon.png")
+            "C:/Users/use/Desktop/Covid-19 Group project/images/logOut_icon.png")
         icon_logOut = icon_logOut.resize((50, 50), Image.ANTIALIAS)
         icon_logOut1 = ImageTk.PhotoImage(icon_logOut)
         logOut_btn = Button(frame1, image=icon_logOut1,
