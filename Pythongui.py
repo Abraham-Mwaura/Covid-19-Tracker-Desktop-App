@@ -1,3 +1,4 @@
+from os import name
 from threading import Timer
 from tkinter import *
 from PIL import ImageTk, Image
@@ -11,8 +12,10 @@ import mysql.connector
 from sqlalchemy import create_engine
 import serial
 import time
-from tkinter import ttk 
+from tkinter import ttk
 from tkinter.font import BOLD
+
+from sqlalchemy.engine import result
 
 #from tooltip import ToolTip
 #from tkinter.constants import BOTH
@@ -20,6 +23,7 @@ from tkinter.font import BOLD
 
 my_conn = create_engine("mysql+mysqldb://root:root@localhost/users")
 
+name=''
 def get_data():
     apidata = requests.get("https://api.covid19api.com/summary").text
     # loading the string into python and converting it into
@@ -30,7 +34,7 @@ def get_data():
     for country_info in apidata_info['Countries']:
         country_list.append([country_info['Country'], country_info['TotalConfirmed'],
                             country_info['TotalDeaths'], country_info['Date']])
-    #appends the global data at the end of the database
+    # appends the global data at the end of the database
     country_list.append(["Global", apidata_info["Global"]['TotalConfirmed'],
                         apidata_info["Global"]['TotalDeaths'], apidata_info["Global"]['Date']])
 
@@ -56,7 +60,7 @@ myDb = mysql.connector.connect(  # connecting to database
 )
 
 myCursor = myDb.cursor()
-#the function get_data in executed after every five minutes
+# the function get_data in executed after every five minutes
 t = Timer(60.0, get_data)
 t.start()
 # this line of code is run on the 1st instance of the code
@@ -65,7 +69,7 @@ t.start()
 
 
 Config = {
-    #this data is stored as a dictionary; they are the parameters for firebase connection
+    # this data is stored as a dictionary; they are the parameters for firebase connection
     "apiKey": "AIzaSyDusq6Crtup5gEtC7uTvtMtkDZjuJorQQc",
     "authDomain": "covid-19-group-project.firebaseapp.com",
     "databaseURL": "https://covid-19-group-project-default-rtdb.firebaseio.com",
@@ -76,49 +80,56 @@ Config = {
     "measurementId": "G-PNJPHDFBMC"
 }
 # Initialize Firebase
-def connFirebase ():
+
+
+def connFirebase():
     global db
     firebase = pyrebase.initialize_app(Config)
     print(firebase)
     db = firebase.database()
 
-fbTimer= Timer(6.0, connFirebase)
+
+fbTimer = Timer(6.0, connFirebase)
 fbTimer.start()
 
 
 # create the first instance of the screen
 root = Tk()
-#This is the title for our app
+# This is the title for our app
 root.title("Covid1-19 Tracker and predictions")
-#App logo
-root.iconbitmap("C:/Users/use/Desktop/Covid-19 Group project/images/logo_icon.ico")
-#The initial set size for our app
+# App logo
+root.iconbitmap(
+    "C:/Users/use/Desktop/Covid-19 Group project/images/logo_icon.ico")
+# The initial set size for our app
 #
 root.geometry("1600x900")
 
 
 # creating the first frame
 frame = Frame(root)
-#this ensures that the frame spans in the whole window
+# this ensures that the frame spans in the whole window
 frame.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
 
 # mounting the image on the frame
 my_img = ImageTk.PhotoImage(Image.open("images/logo_icon.ico"))
 my_icon = Label(frame, image=my_img)
-my_icon.place(rely=0.18148, relx=0.27,relheight=0.333,relwidth=0.1875)
+my_icon.place(rely=0.18148, relx=0.27, relheight=0.333, relwidth=0.1875)
 
 
-label_haveAccount = Label(frame, text="Already have an account?", anchor=W, font='helvetica 15 bold')
-label_haveAccount.place(relx=0.5, rely=0.1848 )
+label_haveAccount = Label(
+    frame, text="Already have an account?", anchor=W, font='helvetica 15 bold')
+label_haveAccount.place(relx=0.5, rely=0.1848)
 
-label_username = Label(frame, text="username", anchor=W,font='helvetica  15 bold ')
-label_username.place(relx=0.5199,rely=0.2644)
+label_username = Label(frame, text="username", anchor=W,
+                       font='helvetica  15 bold ')
+label_username.place(relx=0.5199, rely=0.2644)
 
-enter_usernamel = Entry(frame, width=30,font='helvetica  15')
+enter_usernamel = Entry(frame, width=30, font='helvetica  15')
 enter_usernamel.place(relx=0.5, rely=0.3233)
 
 
-label_password = Label(frame, text="Password", anchor=W,font='helvetica  15 bold')
+label_password = Label(frame, text="Password", anchor=W,
+                       font='helvetica  15 bold')
 label_password.place(relx=0.5199, rely=0.3822)
 
 enter_passwordl = Entry(frame, width=30, font='helvetica 15')
@@ -127,56 +138,49 @@ enter_passwordl.place(relx=0.5, rely=0.4411)
 
 def global_window():
     global globe_welcome_Label, world_label
-    global icon_backHome, icon_backHome1,icon_world,icon_world1
+    global icon_backHome, icon_backHome1, icon_world, icon_world1
     frame_globe = Frame(root)
     frame_globe.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
     frame.forget()
 
-    icon_world= Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/images/world.jpg")
+    icon_world = Image.open(
+        "C:/Users/use/Desktop/Covid-19 Group project/images/world.jpg")
     icon_world = icon_world.resize((1600, 900), Image.ANTIALIAS)
     icon_world1 = ImageTk.PhotoImage(icon_world)
     world_label = Label(frame_globe, image=icon_world1)
     world_label.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
-    
 
-
-    #using treeview to display the data from the data  from the database
-    trv = ttk.Treeview(frame_globe, selectmode ='browse')
-    vsb = ttk.Scrollbar(frame_globe, orient="vertical",command=trv.yview)
-    vsb.place(relx=0.900, rely=0.1,relheight=0.856)
+    # using treeview to display the data from the data  from the database
+    trv = ttk.Treeview(frame_globe, selectmode='browse')
+    vsb = ttk.Scrollbar(frame_globe, orient="vertical", command=trv.yview)
+    vsb.place(relx=0.900, rely=0.1, relheight=0.856)
     trv.configure(yscrollcommand=vsb.set)
 
-    
-    trv.place(relx=0.0668,rely=0.1,relheight=0.856, relwidth=0.856)
+    trv.place(relx=0.0668, rely=0.1, relheight=0.856, relwidth=0.856)
     # number of columns
-    trv["columns"] = ("1", "2", "3","4")
+    trv["columns"] = ("1", "2", "3", "4")
 
     # Defining heading
     trv['show'] = 'headings'
 
     # width of columns
-    trv.column("1", width = 300) 
-    trv.column("2", width = 300)
-    trv.column("3", width = 300)
-    trv.column("4", width = 300)
-    #trv.pack(fill=BOTH,expand=1)
+    trv.column("1", width=300)
+    trv.column("2", width=300)
+    trv.column("3", width=300)
+    trv.column("4", width=300)
+    # trv.pack(fill=BOTH,expand=1)
 
-  
     # respective columns
-    trv.heading("1", text ="Country")
-    trv.heading("2", text ="TotalConfirmed")
-    trv.heading("3", text ="TotalDeaths")
-    trv.heading("4", text ="Date")  
+    trv.heading("1", text="Country")
+    trv.heading("2", text="TotalConfirmed")
+    trv.heading("3", text="TotalDeaths")
+    trv.heading("4", text="Date")
 
-
-    # getting data from MySQL table 
-    results=my_conn.execute('''SELECT * from live_cases''')
-    for dt in results: 
-        trv.insert("", 'end',iid=dt[0], text=dt[0],
-                values =(dt[0],dt[1],dt[2],dt[3]))
-
-
+    # getting data from MySQL table
+    results = my_conn.execute('''SELECT * from live_cases''')
+    for dt in results:
+        trv.insert("", 'end', iid=dt[0], text=dt[0],
+                   values=(dt[0], dt[1], dt[2], dt[3]))
 
     def globalWindowQuit():
         frame_globe.place_forget()
@@ -199,8 +203,8 @@ def yourHealth_window():
     frame.forget()
 
     health_welcLabel = Label(
-        frame_health, text="This is the Customers Health Window", font="Helvetica  25 bold", padx=100)
-    health_welcLabel.grid(column=1, row=0)
+        frame_health, text="This is the Customers Health Window", font="Helvetica  25 bold")
+    health_welcLabel.grid(column=1, row=0, rowspan=4)
 
     def HealthWindowQuit():
         frame_health.place_forget()
@@ -265,130 +269,178 @@ def yourHealth_window():
         print("Your temperature is= ", finalTemp, "C")
 
     measureTemp_Btn = Button(
-        frame_health, text="Click here to measure temperature", command=measureTemp)
-    measureTemp_Btn.grid(column=3, row=3)
+        frame_health, text="Click here to measure temperature", command=measureTemp, fg="#2E8BC0", font="helvetica 15 bold")
+    measureTemp_Btn.place(relx=0.6, rely=0.125)
 
-
-
-
-    t1=IntVar()
-    t2=IntVar()
-    t3=IntVar()
-    t4=IntVar()
-    t5=IntVar()
-    t6=IntVar()
-    t7=IntVar()
-    t8=IntVar()
-    t9=IntVar()
-    t10=IntVar()
-    t11=IntVar()
-    t12=IntVar()
-    t13=IntVar()
-    t14=IntVar()
-    t15=IntVar()
-    t16=IntVar()
-    t17=IntVar()
-    t18= IntVar()
-    text1=''
-    text2=''
+    t1 = IntVar()
+    t2 = IntVar()
+    t3 = IntVar()
+    t4 = IntVar()
+    t5 = IntVar()
+    t6 = IntVar()
+    t7 = IntVar()
+    t8 = IntVar()
+    t9 = IntVar()
+    t10 = IntVar()
+    t11 = IntVar()
+    t12 = IntVar()
+    t13 = IntVar()
+    t14 = IntVar()
+    t15 = IntVar()
+    t16 = IntVar()
+    t17 = IntVar()
+    t18 = IntVar()
+    text1 = ''
+    text2 = ''
 
     def exposureRate():
         global predict1
         predict1 = t1.get()+t2.get()+t3.get()+t4.get()+t18.get()
-        #+t5.get()+t6.get()+t7.get()+t8.get()
-        Label(frame_health,text="Your exposure rate is :"+str(predict1)+"%"+"\n", fg="#2E8BC0",font="helvetica 15 bold", ).grid(row=9,column=1)
+        # +t5.get()+t6.get()+t7.get()+t8.get()
+        Label(frame_health, text="Your exposure rate is :"+str(predict1)+"%" +
+              "\n", fg="#2E8BC0", font="helvetica 15 bold", ).grid(row=9, column=1)
     exposureRate()
 
-    Label(frame_health,text='Have you been in contact with a confirmed COVID-19 patient?',font=0.1).grid(row=4,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='Yes', variable=t1,value=20,command=exposureRate,font=0.1).grid(row=4,column=2)
-    Radiobutton(frame_health, text='No', variable=t1,value=0.00,command=exposureRate,font=0.1).grid(row=4, column=3)
+    Label(frame_health, text='Have you been in contact with a confirmed COVID-19 patient?',
+          font=0.1).grid(row=4, column=1, sticky=W, padx=20)
+    Radiobutton(frame_health, text='Yes', variable=t1, value=20,
+                command=exposureRate, font=0.1).grid(row=4, column=2, sticky=W)
+    Radiobutton(frame_health, text='No', variable=t1, value=0.00,
+                command=exposureRate, font=0.1).grid(row=4, column=3, sticky=W)
 
-    Label(frame_health,text="Have you  traveled from a country declared as a hotspot zone?",font=0.1).grid(row=5,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='Yes', variable=t2,value=20,command=exposureRate,font=0.1).grid(row=5,column=2)
-    Radiobutton(frame_health, text='No', variable=t2,value=0.00,command=exposureRate,font=0.1).grid(row=5, column=3)
+    Label(frame_health, text="Have you  traveled from a country declared as a hotspot zone?",
+          font=0.1).grid(row=5, column=1, sticky=W, padx=20)
+    Radiobutton(frame_health, text='Yes', variable=t2, value=20,
+                command=exposureRate, font=0.1).grid(row=5, column=2)
+    Radiobutton(frame_health, text='No', variable=t2, value=0.00,
+                command=exposureRate, font=0.1).grid(row=5, column=3)
 
-    Label(frame_health,text="Do have asthma, chronic bronchitis, pulmonary hypertension,diabetes,\n sickle cell anaemia, chronic liver or kidney disease?",font=0.1).grid(row=6,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='Yes', variable=t3,value=20,command=exposureRate,font=0.1).grid(row=6,column=2)
-    Radiobutton(frame_health, text='No', variable=t3,value=0.00,command=exposureRate,font=0.1).grid(row=6, column=3)
+    Label(frame_health, text="Do have asthma, chronic bronchitis, pulmonary hypertension,diabetes,\n sickle cell anaemia, chronic liver or kidney disease?",
+          font=0.1).grid(row=6, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='Yes', variable=t3, value=20,
+                command=exposureRate, font=0.1).grid(row=6, column=2)
+    Radiobutton(frame_health, text='No', variable=t3, value=0.00,
+                command=exposureRate, font=0.1).grid(row=6, column=3)
 
+    Label(frame_health, text='Are you living in a town declared as Covid-19  hotspot zone?',
+          font=0.1).grid(row=7, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='yes', variable=t4, value=20,
+                command=exposureRate, font=0.1).grid(row=7, column=2)
+    Radiobutton(frame_health, text='No', variable=t4, value=0.00,
+                command=exposureRate, font=0.1).grid(row=7, column=3)
 
-    Label(frame_health,text='Are you living in a town declared as Covid-19  hotspot zone?',font=0.1).grid(row=7,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='yes', variable=t4,value=20,command=exposureRate,font=0.1).grid(row=7,column=2)
-    Radiobutton(frame_health, text='No', variable=t4,value=0.00,command=exposureRate,font=0.1).grid(row=7, column=3)
-
-    Label(frame_health,text='Have you been vaccinated?',font=0.1).grid(row=8,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='Yes', variable=t18,value=0.00,command=exposureRate,font=0.1).grid(row=8,column=2)
-    Radiobutton(frame_health, text='No', variable=t18,value=20,command=exposureRate,font=0.1).grid(row=8, column=3)
-
-
-
+    Label(frame_health, text='Have you been vaccinated?', font=0.1).grid(
+        row=8, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='Yes', variable=t18, value=0.00,
+                command=exposureRate, font=0.1).grid(row=8, column=2)
+    Radiobutton(frame_health, text='No', variable=t18, value=20,
+                command=exposureRate, font=0.1).grid(row=8, column=3)
 
     def symptomsPercent():
         global predict2
         predict2 = t5.get()+t6.get()+t7.get()+t8.get()
-        Label(frame_health,text="Your severe symptoms percentage rate is :"+str(predict2)+"\n",fg="#2E8BC0",font="helvetica 15 bold",).grid(row=14,column=1)
+        Label(frame_health, text="Your severe symptoms percentage rate is :" +
+              str(predict2)+"\n", fg="#2E8BC0", font="helvetica 15 bold",).grid(row=14, column=1)
     symptomsPercent()
 
-    Label(frame_health,text='Does patient have a temperature higher than 38°c?',font=0.1).grid(row=10,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='yes', variable=t5,value=25,command=symptomsPercent,font=0.1).grid(row=10,column=2)
-    Radiobutton(frame_health, text='No', variable=t5,value=0.00,command=symptomsPercent,font=0.1).grid(row=10, column=3)
+    Label(frame_health, text='Does patient have a temperature higher than 38°c?',
+          font=0.1).grid(row=10, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='yes', variable=t5, value=25,
+                command=symptomsPercent, font=0.1).grid(row=10, column=2)
+    Radiobutton(frame_health, text='No', variable=t5, value=0.00,
+                command=symptomsPercent, font=0.1).grid(row=10, column=3)
 
-    Label(frame_health,text='Does patient have chest pain or pressure',font=0.1).grid(row=11,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='yes', variable=t6,value=25,command=symptomsPercent,font=0.1).grid(row=11,column=2)
-    Radiobutton(frame_health, text='No', variable=t6,value=0.00,command=symptomsPercent,font=0.1).grid(row=11, column=3)
+    Label(frame_health, text='Does patient have chest pain or pressure',
+          font=0.1).grid(row=11, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='yes', variable=t6, value=25,
+                command=symptomsPercent, font=0.1).grid(row=11, column=2)
+    Radiobutton(frame_health, text='No', variable=t6, value=0.00,
+                command=symptomsPercent, font=0.1).grid(row=11, column=3)
 
+    Label(frame_health, text='Does patient have trouble breathing').grid(
+        row=12, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='yes', variable=t7, value=25,
+                command=symptomsPercent, font=0.1).grid(row=12, column=2)
+    Radiobutton(frame_health, text='No', variable=t7, value=0.00,
+                command=symptomsPercent, font=0.1).grid(row=12, column=3)
 
-    Label(frame_health,text='Does patient have trouble breathing').grid(row=12,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='yes', variable=t7,value=25,command=symptomsPercent,font=0.1).grid(row=12,column=2)
-    Radiobutton(frame_health, text='No', variable=t7,value=0.00,command=symptomsPercent,font=0.1).grid(row=12, column=3)
-
-    Label(frame_health,text='Is  Patient experiencing loss of speech or movement?',font=0.1).grid(row=13,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='yes', variable=t8,value=25,command=symptomsPercent,font=0.1).grid(row=13,column=2)
-    Radiobutton(frame_health, text='No', variable=t8,value=0.00,command=symptomsPercent,font=0.1).grid(row=13, column=3)
-
+    Label(frame_health, text='Is  Patient experiencing loss of speech or movement?',
+          font=0.1).grid(row=13, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='yes', variable=t8, value=25,
+                command=symptomsPercent, font=0.1).grid(row=13, column=2)
+    Radiobutton(frame_health, text='No', variable=t8, value=0.00,
+                command=symptomsPercent, font=0.1).grid(row=13, column=3)
 
     def mildSymptoms():
         global predict3
-        predict3 = t9.get()+t10.get()+t11.get()+t12.get()+t13.get()+t14.get()+t15.get()+t16.get()+t17.get()
-        Label(frame_health,text="mild symptoms%:"+str(predict3)+"\n",fg="#2E8BC0",font="helvetica 15 bold",).grid(row=24,column=1)
+        predict3 = t9.get()+t10.get()+t11.get()+t12.get()+t13.get() + \
+            t14.get()+t15.get()+t16.get()+t17.get()
+        Label(frame_health, text="mild symptoms%:"+str(predict3)+"\n",
+              fg="#2E8BC0", font="helvetica 15 bold",).grid(row=24, column=1)
     mildSymptoms()
 
-    Label(frame_health,text="Does patient have a fever?",anchor=W,font=0.1).grid(row=15,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='yes', variable=t9,value=10,command=mildSymptoms,font=0.1).grid(row=15,column=2)
-    Radiobutton(frame_health, text='No', variable=t9,value=0.00,command=mildSymptoms,font=0.1).grid(row=15, column=3)
+    Label(frame_health, text="Does patient have a fever?", anchor=W,
+          font=0.1).grid(row=15, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='yes', variable=t9, value=10,
+                command=mildSymptoms, font=0.1).grid(row=15, column=2)
+    Radiobutton(frame_health, text='No', variable=t9, value=0.00,
+                command=mildSymptoms, font=0.1).grid(row=15, column=3)
 
-    Label(frame_health,text='Does patient have a dry cough?',font=0.1).grid(row=16,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='yes', variable=t10,value=10,command=mildSymptoms,font=0.1).grid(row=16,column=2)
-    Radiobutton(frame_health, text='No', variable=t10,value=0.00,command=mildSymptoms,font=0.1).grid(row=16, column=3)
+    Label(frame_health, text='Does patient have a dry cough?', font=0.1).grid(
+        row=16, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='yes', variable=t10, value=10,
+                command=mildSymptoms, font=0.1).grid(row=16, column=2)
+    Radiobutton(frame_health, text='No', variable=t10, value=0.00,
+                command=mildSymptoms, font=0.1).grid(row=16, column=3)
 
+    Label(frame_health, text='Does patient have a running nose?',
+          font=0.1).grid(row=17, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='yes', variable=t11, value=10,
+                command=mildSymptoms, font=0.1).grid(row=17, column=2)
+    Radiobutton(frame_health, text='No', variable=t11, value=0.00,
+                command=mildSymptoms, font=0.1).grid(row=17, column=3)
 
-    Label(frame_health,text='Does patient have a running nose?',font=0.1).grid(row=17,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='yes', variable=t11,value=10,command=mildSymptoms,font=0.1).grid(row=17,column=2)
-    Radiobutton(frame_health, text='No', variable=t11,value=0.00,command=mildSymptoms,font=0.1).grid(row=17, column=3)
+    Label(frame_health, text='Is patient experiencing loss of smell or taste?',
+          font=0.1).grid(row=18, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='yes', variable=t12, value=10,
+                command=mildSymptoms, font=0.1).grid(row=18, column=2)
+    Radiobutton(frame_health, text='No', variable=t12, value=0.00,
+                command=mildSymptoms, font=0.1).grid(row=18, column=3)
 
-    Label(frame_health,text='Is patient experiencing loss of smell or taste?',font=0.1).grid(row=18,column=1,sticky=W,padx=20,pady=2.5 )
-    Radiobutton(frame_health, text='yes', variable=t12,value=10,command=mildSymptoms,font=0.1).grid(row=18,column=2)
-    Radiobutton(frame_health, text='No', variable=t12,value=0.00,command=mildSymptoms,font=0.1).grid(row=18, column=3)
+    Label(frame_health, text="Does patient have a sore throat?", font=0.1).grid(
+        row=19, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='yes', variable=t13, value=10,
+                command=mildSymptoms, font=0.1).grid(row=19, column=2)
+    Radiobutton(frame_health, text='No', variable=t13, value=0.00,
+                command=mildSymptoms, font=0.1).grid(row=19, column=3)
 
-    Label(frame_health,text="Does patient have a sore throat?",font=0.1).grid(row=19,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='yes', variable=t13,value=10,command=mildSymptoms,font=0.1).grid(row=19,column=2)
-    Radiobutton(frame_health, text='No', variable=t13,value=0.00,command=mildSymptoms,font=0.1).grid(row=19, column=3)
+    Label(frame_health, text='Is patient experiencing loss of appetite?',
+          font=0.1).grid(row=20, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='yes', variable=t14, value=10,
+                command=mildSymptoms, font=0.1).grid(row=20, column=2)
+    Radiobutton(frame_health, text='No', variable=t14, value=0.00,
+                command=mildSymptoms, font=0.1).grid(row=20, column=3)
 
-    Label(frame_health,text='Is patient experiencing loss of appetite?',font=0.1).grid(row=20,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='yes', variable=t14,value=10,command=mildSymptoms,font=0.1).grid(row=20,column=2)
-    Radiobutton(frame_health, text='No', variable=t14,value=0.00,command=mildSymptoms,font=0.1).grid(row=20, column=3)
+    Label(frame_health, text='Is patient experiencing fatigue?', font=0.1).grid(
+        row=21, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='yes', variable=t15, value=10,
+                command=mildSymptoms, font=0.1).grid(row=21, column=2)
+    Radiobutton(frame_health, text='No', variable=t15, value=0.00,
+                command=mildSymptoms, font=0.1).grid(row=21, column=3)
 
-    Label(frame_health,text='Is patient experiencing fatigue?',font=0.1).grid(row=21,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='yes', variable=t15,value=10,command=mildSymptoms,font=0.1).grid(row=21,column=2)
-    Radiobutton(frame_health, text='No', variable=t15,value=0.00,command=mildSymptoms,font=0.1).grid(row=21, column=3)
+    Label(frame_health, text='Does patient have diarrhea?', font=0.1).grid(
+        row=22, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='yes', variable=t16, value=10,
+                command=mildSymptoms, font=0.1).grid(row=22, column=2)
+    Radiobutton(frame_health, text='No', variable=t16, value=0.00,
+                command=mildSymptoms, font=0.1).grid(row=22, column=3)
 
-    Label(frame_health,text='Does patient have diarrhea?',font=0.1).grid(row=22,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='yes', variable=t16,value=10,command=mildSymptoms,font=0.1).grid(row=22,column=2)
-    Radiobutton(frame_health, text='No', variable=t16,value=0.00,command=mildSymptoms,font=0.1).grid(row=22, column=3)
-
-    Label(frame_health,text='Does patient have muscle or joint pain',font=0.1).grid(row=23,column=1,sticky=W,padx=20,pady=2.5)
-    Radiobutton(frame_health, text='yes', variable=t17,value=10,command=mildSymptoms,font=0.1).grid(row=23,column=2)
-    Radiobutton(frame_health, text='No', variable=t17,value=0.00,command=mildSymptoms,font=0.1).grid(row=23, column=3)
+    Label(frame_health, text='Does patient have muscle or joint pain',
+          font=0.1).grid(row=23, column=1, sticky=W, padx=20, pady=2.5)
+    Radiobutton(frame_health, text='yes', variable=t17, value=10,
+                command=mildSymptoms, font=0.1).grid(row=23, column=2)
+    Radiobutton(frame_health, text='No', variable=t17, value=0.00,
+                command=mildSymptoms, font=0.1).grid(row=23, column=3)
 
     def recommendations():
         global text2, text1
@@ -397,13 +449,13 @@ def yourHealth_window():
         top.geometry("400x200")
         top.title("RECOMMENDATIONS")
 
-        test_percentage=(predict1+predict2+predict3)/3
+        test_percentage = (predict1+predict2+predict3)/3
         #Label(top,text='Your test Percentage is '+ str(test_percentage) ).grid(row=25,column=1)
         #messagebox.showinfo("RECCOMMENDATIONS",text+text1 )
 
     #Label(frame_health,text='RECCOMMENDATIONS ').grid(row=26,column=1)
-        if(test_percentage==0):
-            text1='''You do not need to be tested for COVID-19.stay
+        if(test_percentage == 0):
+            text1 = '''You do not need to be tested for COVID-19.stay
                 safe by taking  precautions,
                 such as social distancing, wearing a  
                 mask, keeping rooms well   ventilated, 
@@ -411,48 +463,36 @@ def yourHealth_window():
                 cleaning your hands, and coughing into 
                 a bent elbow or tissue. '''
 
-        if(test_percentage>0 and test_percentage<30):
-            text1='''self-quarantine for 14 days\n.
+        if(test_percentage > 0 and test_percentage < 30):
+            text1 = '''self-quarantine for 14 days\n.
                 Monitor your health daily and If your symptoms get worse, 
                 call your health care provider immediately.'''
 
-        if(test_percentage>30 and test_percentage<50):
-            text1='"please get tested for covid 19"' 
+        if(test_percentage > 30 and test_percentage < 50):
+            text1 = '"please get tested for covid 19"'
 
-        if (test_percentage>50 and test_percentage<80):
-            text1='''covid test percentage is higher than 50%!!\n 
+        if (test_percentage > 50 and test_percentage < 80):
+            text1 = '''covid test percentage is higher than 50%!!\n 
             Please seek medical advice and call before going
             to nearest emergency department.'+ test_percentage'''
 
-        if(test_percentage>80):
-            text1= '''seek medical attention immediately!!!\n 
+        if(test_percentage > 80):
+            text1 = '''seek medical attention immediately!!!\n 
             Call before going to the nearest emergency department.\n\n'''
 
-        #e is the exposure pecentage, predict 1
+        # e is the exposure pecentage, predict 1
 
         # s is the severe sypmptoms percentage predict 2
-        if( predict1>50 ):
-            text2="you have more than 2 severe symptoms.\n Please seek medical advice as soon as possible and call before   going to nearest emergency department.\n\n" 
-        if (predict2>50):
-            text2='"High risk exposure.\n Stay safe by taking  precautions, such as social distancing, wearing a   mask, keeping rooms well   ventilated, avoiding crowds, cleaning your hands, and coughing into a bent elbow or tissue.\n"'
+        if(predict1 > 50):
+            text2 = "you have more than 2 severe symptoms.\n Please seek medical advice as soon as possible and call before   going to nearest emergency department.\n\n"
+        if (predict2 > 50):
+            text2 = '"High risk exposure.\n Stay safe by taking  precautions, such as social distancing, wearing a   mask, keeping rooms well   ventilated, avoiding crowds, cleaning your hands, and coughing into a bent elbow or tissue.\n"'
 
-
-
-        l2 = Label(top, text = text1 +"\n" + text2 ,font=10,fg="#2E8BC0" )
+        l2 = Label(top, text=text1 + "\n" + text2, font=10, fg="#2E8BC0")
         l2.pack()
 
-    Button(frame_health,text="show Recommendations",command=recommendations).grid(row=34,column=1)
-
-
-
-
-
-
-
-
-
-
-
+    Button(frame_health, text="show Recommendations",
+           command=recommendations).grid(row=34, column=1)
 
 
 def yourInfo_window():
@@ -481,42 +521,40 @@ def yourInfo_window():
 
 def developer_window():
     global dev_welcLabel
-    global icon_backHome, icon_backHome1, icon_abraham1, icon_abraham,icon_trevor1,icon_trevor,icon_mirriam,icon_mirriam1
+    global icon_backHome, icon_backHome1, icon_abraham1, icon_abraham, icon_trevor1, icon_trevor, icon_mirriam, icon_mirriam1
 
     frame_dev = Frame(root)
     frame_dev.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
     frame.forget()
 
-    #C:/Users/use/Desktop/Covid-19 Group project/images
+    # C:/Users/use/Desktop/Covid-19 Group project/images
 
-    icon_abraham= Image.open(
+    icon_abraham = Image.open(
         "C:/Users/use/Desktop/Covid-19 Group project/images/abraham.jpg")
     icon_abraham = icon_abraham.resize((200, 200), Image.ANTIALIAS)
-    icon_abraham1= ImageTk.PhotoImage(icon_abraham)
+    icon_abraham1 = ImageTk.PhotoImage(icon_abraham)
     abraham_btn = Button(frame_dev, image=icon_abraham1)
     abraham_btn.place(relx=0.061, rely=0.136)
-    label_abraham= Label(frame_dev, text="Name :Abraham Mwaura\n\n Profession:Biomedical Engineering Student\nRoles:Team leader,GUI development\n\nSkills: Web Development,Desktop GUI development,Leadership, Strategist\n\n Languages and frameworks:C,C++,Python, Tkinter, React\n Contact: amwaura101@gmail.com", relief=FLAT,font="Helvetica  10")
-    label_abraham.place(relx=0.01, rely=0.443,relheight=0.45, relwidth=0.34)
- 
-    icon_trevor= Image.open(
+    label_abraham = Label(frame_dev, text="Name :Abraham Mwaura\n\n Profession:Biomedical Engineering Student\nRoles:Team leader,GUI development\n\nSkills: Web Development,Desktop GUI development,Leadership, Strategist\n\n Languages and frameworks:C,C++,Python, Tkinter, React\n Contact: amwaura101@gmail.com", relief=FLAT, font="Helvetica  10")
+    label_abraham.place(relx=0.01, rely=0.443, relheight=0.45, relwidth=0.34)
+
+    icon_trevor = Image.open(
         "C:/Users/use/Desktop/Covid-19 Group project/images/trevor.jpg")
     icon_trevor = icon_trevor.resize((200, 200), Image.ANTIALIAS)
-    icon_trevor1= ImageTk.PhotoImage(icon_trevor)
+    icon_trevor1 = ImageTk.PhotoImage(icon_trevor)
     trevor_btn = Button(frame_dev, image=icon_trevor1)
     trevor_btn.place(relx=0.396, rely=0.136)
-    label_trevor= Label(frame_dev,text="Name: Trevor Agola\n\n Profession: Electrical and Electronics Engineering\nRole: Microcontroller programming, Hardware Intergration, UI Design.\n\n Skills: Graphic design, Hardware Programming, team player, creative\n\n.Languages/Framework: C,C++, Arduino, Python, CSS\n.Contact: trevoragola5968@gmail.com ",relief=FLAT,font="Helvetica  10")
-    label_trevor.place(relx=0.366,rely=0.443, relheight=0.45, relwidth=0.323)
- 
-    icon_mirriam= Image.open(
+    label_trevor = Label(frame_dev, text="Name: Trevor Agola\n\n Profession: Electrical and Electronics Engineering\nRole: Microcontroller programming, Hardware Intergration, UI Design.\n\n Skills: Graphic design, Hardware Programming, team player, creative\n\n.Languages/Framework: C,C++, Arduino, Python, CSS\n.Contact: trevoragola5968@gmail.com ", relief=FLAT, font="Helvetica  10")
+    label_trevor.place(relx=0.366, rely=0.443, relheight=0.45, relwidth=0.323)
+
+    icon_mirriam = Image.open(
         "C:/Users/use/Desktop/Covid-19 Group project/images/mirriam.jpg")
     icon_mirriam = icon_mirriam.resize((200, 200), Image.ANTIALIAS)
-    icon_mirriam1= ImageTk.PhotoImage(icon_mirriam)
+    icon_mirriam1 = ImageTk.PhotoImage(icon_mirriam)
     mirriam_btn = Button(frame_dev, image=icon_mirriam1)
     mirriam_btn.place(relx=0.750, rely=0.136)
-    label_mirriam= Label(frame_dev,text="Name: Mirriam Mwende Mbithi\n\nProfession: Electrical and Electronics Engineering student\nRole: Database Management, GUI development\n\nSkills: Database Management, GUI programming,\ngoal-oriented, team player\n\nLanguages/Frameworks: SQL,Tkinter,C++,C, Python\nContact: mirriammwende001@gmail.com",relief=FLAT,font="Helvetica  10")
-    label_mirriam.place(relx=0.700,rely=0.443,relheight=0.45,relwidth=0.323)
-
-
+    label_mirriam = Label(frame_dev, text="Name: Mirriam Mwende Mbithi\n\nProfession: Electrical and Electronics Engineering student\nRole: Database Management, GUI development\n\nSkills: Database Management, GUI programming,\ngoal-oriented, team player\n\nLanguages/Frameworks: SQL,Tkinter,C++,C, Python\nContact: mirriammwende001@gmail.com", relief=FLAT, font="Helvetica  10")
+    label_mirriam.place(relx=0.700, rely=0.443, relheight=0.45, relwidth=0.323)
 
     dev_welcLabel = Label(
         frame_dev, text="Developers Information", font="Helvetica  20 bold", padx=100)
@@ -564,6 +602,7 @@ def open_url(num):
 
 
 def home_button():
+    global name
     frame1 = Frame(root)
 
     frame1.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
@@ -634,12 +673,14 @@ def home_button():
     icons()
 
     def emojis():
+
         # Mounting the welcome label
-        global welcome_label, feel_label
-        welcome_label = Label(frame1, text="Welcome",
+        global welcome_label, feel_label,name
+        welcome_label = Label(frame1, text="Welcome "+name,
                               font="Helvetica  25 bold", padx=100, bg="#233D72", fg="white")
-                           
-        welcome_label.place(rely=0.094444, relx=0.17222, relwidth=0.18,relheight=0.0370, height=16.7, width=144)
+
+        welcome_label.place(rely=0.094444, relx=0.17222,
+                            relwidth=0.18, relheight=0.0370, height=16.7, width=144)
         # how are you feel
 
         welcome_label = Label(frame1, text="How are you feeling today?",
@@ -780,62 +821,62 @@ def home_button():
         global label_topStories,  btn_topStory1, btn_topStory2, btn_topStory3
         label_topStories = Label(frame1, text="COVID-19 TOP STORIES",
                                  font="Helvetica 15 bold", bg="#233D72", fg="white")
-        label_topStories.place(relx=0.8625, rely=0.15)
+        label_topStories.place(relx=0.8, rely=0.15)
 
         #thankGod= db.child("Story1").child("link").get()
         news_source1 = db.child("Story1").child("source").get()
         news_title1 = db.child("Story1").child("title").get()
         btn_topStory1 = Button(frame1, command=lambda: open_url(1), text=news_source1.val()+"\n" + news_title1.val(),
                                relief=GROOVE, font="Helvetica 10 bold")
-        btn_topStory1.place(relx=0.8625, rely=0.2222)
+        btn_topStory1.place(relx=0.8, rely=0.2222)
 
         news_source2 = db.child("Story2").child("source").get()
         news_title2 = db.child("Story2").child("Title").get()
         btn_topStory2 = Button(frame1, text=news_source2.val()+"\n" + news_title2.val(),
                                relief=GROOVE, font="Helvetica 10 bold", command=lambda: open_url(2))
-        btn_topStory2.place(relx=0.8625, rely=0.30556)
+        btn_topStory2.place(relx=0.8, rely=0.30556)
 
         news_source3 = db.child("Story3").child("source").get()
         news_title3 = db.child("Story3").child("TITE").get()
         btn_topStory3 = Button(frame1, command=lambda: open_url(3), text=news_source3.val()+"\n" + news_title3.val(),
                                relief=GROOVE, font="Helvetica 10 bold")
         # ,ipadx=10,ipady=20,relyspan=2, sticky=N
-        btn_topStory3.place(relx=0.8625, rely=0.3889)
+        btn_topStory3.place(relx=0.8, rely=0.3889)
 
         news_source4 = db.child("Story4").child("source").get()
         news_title4 = db.child("Story4").child("Title").get()
         btn_topStory4 = Button(frame1, command=lambda: open_url(4), text=news_source4.val()+"\n" + news_title4.val(),
                                relief=GROOVE, font="Helvetica 10 bold")
         # ,ipadx=10,ipady=20,relyspan=2, sticky=N
-        btn_topStory4.place(relx=0.8625, rely=0.4722)
+        btn_topStory4.place(relx=0.8, rely=0.4722)
 
         news_source5 = db.child("Story5").child("source").get()
         news_title5 = db.child("Story5").child("Title").get()
         btn_topStory5 = Button(frame1, command=lambda: open_url(5), text=news_source5.val()+"\n" + news_title5.val(),
                                relief=GROOVE, font="Helvetica 10 bold")
         # ,ipadx=10,ipady=20,relyspan=2, sticky=N
-        btn_topStory5.place(relx=0.8625, rely=0.5556)
+        btn_topStory5.place(relx=0.8, rely=0.5556)
 
         news_source6 = db.child("Story6").child("source").get()
         news_title6 = db.child("Story6").child("TITLE").get()
         btn_topStory6 = Button(frame1, command=lambda: open_url(6), text=news_source6.val()+"\n" + news_title6.val(),
                                relief=GROOVE, font="Helvetica 10 bold")
         # ,ipadx=10,ipady=20,relyspan=2, sticky=N
-        btn_topStory6.place(relx=0.8625, rely=0.6389)
+        btn_topStory6.place(relx=0.8, rely=0.6389)
 
         news_source7 = db.child("Story7").child("source").get()
         news_title7 = db.child("Story7").child("TITLE").get()
         btn_topStory7 = Button(frame1, command=lambda: open_url(7), text=news_source7.val()+"\n" + news_title7.val(),
                                relief=GROOVE, font="Helvetica 10 bold")
         # ,ipadx=10,ipady=20,relyspan=2, sticky=N
-        btn_topStory7.place(relx=0.8625, rely=0.7222)
+        btn_topStory7.place(relx=0.8, rely=0.7222)
 
         news_source8 = db.child("Story8").child("source").get()
         news_title8 = db.child("Story8").child("TITLE").get()
         btn_topStory8 = Button(frame1, command=lambda: open_url(8), text=news_source8.val()+"\n" + news_title8.val(),
                                relief=GROOVE, font="Helvetica 10 bold")
         # ,ipadx=10,ipady=20,relyspan=2, sticky=N
-        btn_topStory8.place(relx=0.8625, rely=0.8055)
+        btn_topStory8.place(relx=0.8, rely=0.8055)
 
     topStories()
 
@@ -848,17 +889,18 @@ def home_button():
             print(myresult1)
             global myresult, var_ConfirmedCases, var_confirmedDeaths
 
-            Label(frame1, text="Total Confirmed Cases").place(relx=0.547, rely=0.216)
+            Label(frame1, text="Total Confirmed Cases").place(
+                relx=0.547, rely=0.216)
             Label(frame1, text="Total Deaths").place(relx=0.547, rely=0.266)
 
             var_ConfirmedCases = myresult1[0][1]
             var_confirmedDeaths = myresult1[0][2]
             global searchConDeaths, searchCases
 
-            searchConCases_label= Label(frame1, text=var_ConfirmedCases)
+            searchConCases_label = Label(frame1, text=var_ConfirmedCases)
             searchConCases_label.place(relx=0.687, rely=0.216)
 
-            searchConDeaths= Label(frame1, text=var_confirmedDeaths)
+            searchConDeaths = Label(frame1, text=var_confirmedDeaths)
             searchConDeaths.place(relx=0.687, rely=0.266)
 
         except Exception as e:
@@ -882,6 +924,7 @@ def home_button():
 
 
 def login():
+    global name 
     user_ver = enter_usernamel.get()
     print(user_ver)
     pas_ver = enter_passwordl.get()
@@ -890,6 +933,7 @@ def login():
     test = myCursor.execute(sql, [(user_ver), (pas_ver)])
     print(test)
     results = myCursor.fetchall()
+    name= results[0][0]
     if results:
         for i in results:
             enter_passwordl.delete(0, END)
@@ -902,10 +946,12 @@ def login():
                                message="Invalid credentials")
 
 
-login_Button = Button(frame, text="Login", command=login,font= "helvetica  15 bold")
+login_Button = Button(frame, text="Login", command=login,
+                      font="helvetica  15 bold")
 login_Button.place(relx=0.51999, rely=0.500)
 
-label_haveAccount = Label(frame, text="Don't have an account?",font= "helvetica  15 bold")
+label_haveAccount = Label(
+    frame, text="Don't have an account?", font="helvetica  15 bold")
 label_haveAccount.place(relx=0.5, rely=0.6589)
 
 
@@ -940,7 +986,7 @@ def sign_up():
         signUp, text="Create account", font="Helvetica  18 bold")
     label_CreateAccount.grid(row=1, column=1, sticky='NSEW', padx=5, pady=10)
 
-    label_firstname = Label(signUp, text="First name",anchor=CENTER)
+    label_firstname = Label(signUp, text="First name", anchor=CENTER)
     label_firstname.grid(row=2, column=1, sticky='NSEW', padx=5, pady=5)
     enter_firstname = Entry(signUp, width=30)
     enter_firstname .grid(row=2, column=2, sticky='NSEW', padx=5, pady=5)
@@ -974,11 +1020,9 @@ def sign_up():
     submit_Button.grid(column=1, row=10, padx=5, pady=5, sticky=NSEW)
 
 
-
-
-
-sign_Button = Button(frame, text="Sign Up", command=sign_up,font='helvetica  15 bold')
-sign_Button.place(relx=0.5199,rely=0.6900)
+sign_Button = Button(frame, text="Sign Up",
+                     command=sign_up, font='helvetica  15 bold')
+sign_Button.place(relx=0.5199, rely=0.6900)
 
 
 root.mainloop()
