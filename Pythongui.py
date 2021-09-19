@@ -1,4 +1,3 @@
-# Introduce a login button function
 from threading import Timer
 from tkinter import *
 from PIL import ImageTk, Image
@@ -10,22 +9,27 @@ import pyrebase
 import webbrowser
 import mysql.connector
 from sqlalchemy import create_engine
+import serial
+import time
+from tkinter import ttk 
 
-# a function to extract data from a[i,convert it into a dictonary first,convert the
-# dictionary into a dataframe and enter the dataframe contents in a mysql table
+from tooltip import ToolTip
+#from tkinter.constants import BOTH
+
+
+my_conn = create_engine("mysql+mysqldb://root:root@localhost/users")
+
 def get_data():
     apidata = requests.get("https://api.covid19api.com/summary").text
     # loading the string into python and converting it into
     apidata_info = json.loads(apidata)
 
     # parsing through the dictionary and extracting the info we need
-    # looping through the list of dictionaries and extracting the values of confirmed and deaths
     country_list = []
     for country_info in apidata_info['Countries']:
         country_list.append([country_info['Country'], country_info['TotalConfirmed'],
                             country_info['TotalDeaths'], country_info['Date']])
-    # country_list
-
+    #appends the global data at the end of the database
     country_list.append(["Global", apidata_info["Global"]['TotalConfirmed'],
                         apidata_info["Global"]['TotalDeaths'], apidata_info["Global"]['Date']])
 
@@ -38,9 +42,10 @@ def get_data():
     mycursor1.execute("DROP TABLE live_cases")
     mycursor1.execute(
         "CREATE TABLE live_cases(Country VARCHAR(255),TotalConfirmed VARCHAR(255),TotalDeaths VARCHAR(255),Date VARCHAR(255))")
-    my_conn = create_engine("mysql+mysqldb://root:root@localhost/users")
+
     country_df.to_sql(con=my_conn, name='live_cases',
                       if_exists='append', index=False)
+
 
 myDb = mysql.connector.connect(  # connecting to database
     host="127.0.0.1",
@@ -48,15 +53,18 @@ myDb = mysql.connector.connect(  # connecting to database
     password="root",
     database="users"
 )
+
 myCursor = myDb.cursor()
-
-
-t = Timer(5.0, get_data)
+#the function get_data in executed after every five minutes
+t = Timer(60.0, get_data)
 t.start()
-#this line of code is run on the 1st instance of the code
+# this line of code is run on the 1st instance of the code
 #myCursor.execute( "CREATE DATABASE users ")
 #myCursor.execute("CREATE TABLE userinfo(firstname VARCHAR(30),secondname VARCHAR(30),username VARCHAR(30),email VARCHAR(30),password VARCHAR(30))")
+
+
 Config = {
+    #this data is stored as a dictionary; they are the parameters for firebase connection
     "apiKey": "AIzaSyDusq6Crtup5gEtC7uTvtMtkDZjuJorQQc",
     "authDomain": "covid-19-group-project.firebaseapp.com",
     "databaseURL": "https://covid-19-group-project-default-rtdb.firebaseio.com",
@@ -67,50 +75,107 @@ Config = {
     "measurementId": "G-PNJPHDFBMC"
 }
 # Initialize Firebase
-firebase = pyrebase.initialize_app(Config)
-db = firebase.database()
+def connFirebase ():
+    global db
+    firebase = pyrebase.initialize_app(Config)
+    print(firebase)
+    db = firebase.database()
 
-#create the first instance of the screen
+fbTimer= Timer(6.0, connFirebase)
+fbTimer.start()
+
+
+# create the first instance of the screen
 root = Tk()
+#This is the title for our app
 root.title("Covid1-19 Tracker and predictions")
+#App logo
 root.iconbitmap("C:/Users/use/Desktop/Covid-19 Group project/logo_icon.ico")
-root.geometry("1000x700")
+#The initial set size for our app
+#
+root.geometry("1600x900")
 
 
 # creating the first frame
 frame = Frame(root)
-frame.grid(row=0, column=0, sticky=N+S+W+E)
+#this ensures that the frame spans in the whole window
+frame.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
 
 # mounting the image on the frame
-my_img = ImageTk.PhotoImage(Image.open("enlightened.ico"))
+my_img = ImageTk.PhotoImage(Image.open("logo_icon.ico"))
 my_icon = Label(frame, image=my_img)
-my_icon.grid(row=0, column=0, rowspan=14, sticky="NSEW", pady=100, padx=100)
+my_icon.place(rely=0.18148, relx=0.3,relheight=0.333,relwidth=0.1875)
 
 
 label_haveAccount = Label(frame, text="Already have an account?", anchor=W)
-label_haveAccount.grid(row=1, column=1, sticky="NSEW")
+label_haveAccount.place(relx=0.5, rely=0.1848 )
 
 label_username = Label(frame, text="username", anchor=W)
-label_username.grid(row=3, column=1, sticky='NSEW')
+label_username.place(relx=0.5199,rely=0.2644)
+
 enter_usernamel = Entry(frame, width=30)
-enter_usernamel.grid(row=4, column=1, sticky='NSEW')
+enter_usernamel.place(relx=0.5, rely=0.3233)
 
 
 label_password = Label(frame, text="Password", anchor=W)
-label_password.grid(row=8, column=1, sticky='NSEW')
+label_password.place(relx=0.5199, rely=0.3822)
+
 enter_passwordl = Entry(frame, width=30)
-enter_passwordl .grid(row=9, column=1, sticky='NSEW')
+enter_passwordl.place(relx=0.5, rely=0.4411)
 
 
 def global_window():
-    global globe_welcome_Label
-    global icon_backHome, icon_backHome1
+    global globe_welcome_Label, world_label
+    global icon_backHome, icon_backHome1,icon_world,icon_world1
     frame_globe = Frame(root)
     frame_globe.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
     frame.forget()
-    globe_welcome_Label = Label(
-        frame_globe, text="This is the global Data Window", font="Helvetica  25 bold", padx=100)
-    globe_welcome_Label.grid(column=1, row=0)
+
+    icon_world= Image.open(
+            "C:/Users/use/Desktop/Covid-19 Group project/world.jpg")
+    icon_world = icon_world.resize((1600, 900), Image.ANTIALIAS)
+    icon_world1 = ImageTk.PhotoImage(icon_world)
+    world_label = Label(frame_globe, image=icon_world1)
+    world_label.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
+    ToolTip(widget=world_label, text="This is the world data")
+
+
+    #using treeview to display the data from the data  from the database
+    trv = ttk.Treeview(frame_globe, selectmode ='browse')
+    vsb = ttk.Scrollbar(frame_globe, orient="vertical",command=trv.yview)
+    vsb.place(relx=0.900, rely=0.1,relheight=0.856)
+    trv.configure(yscrollcommand=vsb.set)
+
+    
+    trv.place(relx=0.0668,rely=0.1,relheight=0.856, relwidth=0.856)
+    # number of columns
+    trv["columns"] = ("1", "2", "3","4")
+
+    # Defining heading
+    trv['show'] = 'headings'
+
+    # width of columns
+    trv.column("1", width = 300) 
+    trv.column("2", width = 300)
+    trv.column("3", width = 300)
+    trv.column("4", width = 300)
+    #trv.pack(fill=BOTH,expand=1)
+
+  
+    # respective columns
+    trv.heading("1", text ="Country")
+    trv.heading("2", text ="TotalConfirmed")
+    trv.heading("3", text ="TotalDeaths")
+    trv.heading("4", text ="Date")  
+
+
+    # getting data from MySQL table 
+    results=my_conn.execute('''SELECT * from live_cases''')
+    for dt in results: 
+        trv.insert("", 'end',iid=dt[0], text=dt[0],
+                values =(dt[0],dt[1],dt[2],dt[3]))
+
+
 
     def globalWindowQuit():
         frame_globe.place_forget()
@@ -146,6 +211,109 @@ def yourHealth_window():
     backHome_btn = Button(frame_health, image=icon_backHome1,
                           relief=RAISED, command=HealthWindowQuit)
     backHome_btn.grid(row=0, column=0, pady=5)
+
+    def measureTemp():
+        serInit = serial.Serial('COM5', 9600)
+        # delay 2s
+        time.sleep(2)
+        global tempSum
+        tempSum = 0
+        global countTemp
+        countTemp = 0
+
+        def ReadData():
+            global i
+            for i in range(5):
+                # reads serial data in byte string
+                byteTemp = serInit.readline()
+
+            # convert byte code to unicode string
+                UniTemp1 = byteTemp.decode()
+            # removes escape characters
+                global UniTemp2
+                UniTemp2 = UniTemp1.rsplit()
+
+            # Typecasts string to float
+                pointTemp = float(UniTemp2[0])
+                print(pointTemp)
+                # arData.append(UniTemp2)
+                temp_label = Label(frame_health, text=str(pointTemp))
+                temp_label.grid(column=4, row=4)
+
+                global tempSum
+
+                tempSum += pointTemp
+                time.sleep(0.5)
+
+            serInit.close()
+        # Find average temperature
+        # execute function
+        ReadData()
+
+        # close serial port
+
+        def avg(a, b):
+            return a/b
+        # final temperature
+        finalTemp = round(avg(tempSum, 30), 1)
+
+        avgTemp_label = Label(
+            frame_health, text="Your Average temperature is " + str(finalTemp))
+        avgTemp_label.grid(column=5, row=5)
+
+        print("Your temperature is= ", finalTemp, "C")
+
+    measureTemp_Btn = Button(
+        frame_health, text="Click here to measure temperature", command=measureTemp)
+    measureTemp_Btn.grid(column=3, row=3)
+
+
+        "has patient been in contact with a confirmed COVID-19 patient\n"
+        ans=input("has patient traveled from a country declared as a hotspot zone\n")
+
+        ans=input("Does patient have asthma, chronic bronchitis, pulmonary hypertension,diabetes, sickle cell anaemia, chronic liver or kidney disease?\n")
+        if ans=='yes':
+
+        ans=input("Is patient living in a town declared as Covid-19  hotspot zone?\n")
+
+        ans=input("Has patient been vaccinated\n")
+
+
+
+
+        ans=input("Does patient have a temperature higher than 38°c?\n")
+
+        ans=input("Does patient have chest pain or pressure\n")
+
+        ans=input("Does patient have trouble breathing?\n")
+
+        ans=input("Is  Patient experiencing loss of speech or movement?\n"
+
+        print("severe symptoms percentage= ",s,"%")
+
+
+
+        ans=input("Does patient have a fever?\n")
+
+        ans=input("Does patient have a dry cough?\n") 
+
+        ans=input("Does patient have a running nose?\n")
+
+        ans=input("Is patient experiencing loss of smell or taste?\n")
+        ans=input("Does patient have a sore throat?\n")
+
+        ans=input("Does patient have a headache?\n"
+
+        ans=input("Is patient experiencing loss of appetite?\n")
+        ans=input("Is patient experiencing fatigue?\n")
+        ans=input("Does patient have diarrhea?\n")
+
+        ans=input("Does patient have muscle or joint pain\n")
+
+
+
+
+
 
 
 def yourInfo_window():
@@ -200,8 +368,26 @@ def open_url(num):
     if num == 1:
         new_link = db.child("Story1").child("link").get()
         webbrowser.open(new_link.val())
-    if num == 2:
+    elif num == 2:
         new_link = db.child("Story2").child("link").get()
+        webbrowser.open(new_link.val())
+    elif num == 3:
+        new_link = db.child("Story3").child("link").get()
+        webbrowser.open(new_link.val())
+    elif num == 4:
+        new_link = db.child("Story4").child("link").get()
+        webbrowser.open(new_link.val())
+    elif num == 5:
+        new_link = db.child("Story5").child("link").get()
+        webbrowser.open(new_link.val())
+    elif num == 6:
+        new_link = db.child("Story6").child("link").get()
+        webbrowser.open(new_link.val())
+    elif num == 7:
+        new_link = db.child("Story6").child("link").get()
+        webbrowser.open(new_link.val())
+    elif num == 8:
+        new_link = db.child("Story6").child("link").get()
         webbrowser.open(new_link.val())
     else:
         return
@@ -221,7 +407,7 @@ def home_button():
         if response == 1:
             frame1.place_forget()
         else:
-            return
+            pass
 
     def icons():
         # This are the sidebar Menu icons
@@ -282,7 +468,8 @@ def home_button():
         global welcome_label, feel_label
         welcome_label = Label(frame1, text="Welcome",
                               font="Helvetica  25 bold", padx=100, bg="#233D72", fg="white")
-        welcome_label.place(rely=0.094444, relx=0.17222, relwidth=0.18)
+                           
+        welcome_label.place(rely=0.094444, relx=0.17222, relwidth=0.18,relheight=0.0370, height=16.7, width=144)
         # how are you feel
 
         welcome_label = Label(frame1, text="How are you feeling today?",
@@ -428,43 +615,57 @@ def home_button():
         #thankGod= db.child("Story1").child("link").get()
         news_source1 = db.child("Story1").child("source").get()
         news_title1 = db.child("Story1").child("title").get()
-
         btn_topStory1 = Button(frame1, command=lambda: open_url(1), text=news_source1.val()+"\n" + news_title1.val(),
                                relief=GROOVE, font="Helvetica 10 bold")
         btn_topStory1.place(relx=0.8625, rely=0.2222)
 
         news_source2 = db.child("Story2").child("source").get()
         news_title2 = db.child("Story2").child("Title").get()
-
         btn_topStory2 = Button(frame1, text=news_source2.val()+"\n" + news_title2.val(),
                                relief=GROOVE, font="Helvetica 10 bold", command=lambda: open_url(2))
-
         btn_topStory2.place(relx=0.8625, rely=0.30556)
 
-        btn_topStory3 = Button(frame1, text="TOP STORY 3",
+        news_source3 = db.child("Story3").child("source").get()
+        news_title3 = db.child("Story3").child("TITE").get()
+        btn_topStory3 = Button(frame1, command=lambda: open_url(3), text=news_source3.val()+"\n" + news_title3.val(),
                                relief=GROOVE, font="Helvetica 10 bold")
         # ,ipadx=10,ipady=20,relyspan=2, sticky=N
         btn_topStory3.place(relx=0.8625, rely=0.3889)
 
-        btn_topStory4 = Button(frame1, text="TOP STORY 4",
+        news_source4 = db.child("Story4").child("source").get()
+        news_title4 = db.child("Story4").child("Title").get()
+        btn_topStory4 = Button(frame1, command=lambda: open_url(4), text=news_source4.val()+"\n" + news_title4.val(),
                                relief=GROOVE, font="Helvetica 10 bold")
         # ,ipadx=10,ipady=20,relyspan=2, sticky=N
         btn_topStory4.place(relx=0.8625, rely=0.4722)
 
-        btn_topStory5 = Button(frame1, text="TOP STORY 5",
+        news_source5 = db.child("Story5").child("source").get()
+        news_title5 = db.child("Story5").child("Title").get()
+        btn_topStory5 = Button(frame1, command=lambda: open_url(5), text=news_source5.val()+"\n" + news_title5.val(),
                                relief=GROOVE, font="Helvetica 10 bold")
         # ,ipadx=10,ipady=20,relyspan=2, sticky=N
         btn_topStory5.place(relx=0.8625, rely=0.5556)
 
-        btn_topStory6 = Button(frame1, text="TOP STORY 6",
+        news_source6 = db.child("Story6").child("source").get()
+        news_title6 = db.child("Story6").child("TITLE").get()
+        btn_topStory6 = Button(frame1, command=lambda: open_url(6), text=news_source6.val()+"\n" + news_title6.val(),
                                relief=GROOVE, font="Helvetica 10 bold")
         # ,ipadx=10,ipady=20,relyspan=2, sticky=N
         btn_topStory6.place(relx=0.8625, rely=0.6389)
 
-        btn_topStory7 = Button(frame1, text="TOP STORY 7",
+        news_source7 = db.child("Story7").child("source").get()
+        news_title7 = db.child("Story7").child("TITLE").get()
+        btn_topStory7 = Button(frame1, command=lambda: open_url(7), text=news_source7.val()+"\n" + news_title7.val(),
                                relief=GROOVE, font="Helvetica 10 bold")
         # ,ipadx=10,ipady=20,relyspan=2, sticky=N
         btn_topStory7.place(relx=0.8625, rely=0.7222)
+
+        news_source8 = db.child("Story8").child("source").get()
+        news_title8 = db.child("Story8").child("TITLE").get()
+        btn_topStory8 = Button(frame1, command=lambda: open_url(8), text=news_source8.val()+"\n" + news_title8.val(),
+                               relief=GROOVE, font="Helvetica 10 bold")
+        # ,ipadx=10,ipady=20,relyspan=2, sticky=N
+        btn_topStory8.place(relx=0.8625, rely=0.8055)
 
     topStories()
 
@@ -472,38 +673,38 @@ def home_button():
         try:
             myCursor.execute(
                 "SELECT * FROM live_cases where Country= '" + e1.get() + "'")
-            e1.delete(0,END)
+            e1.delete(0, END)
             myresult1 = myCursor.fetchall()
             print(myresult1)
             global myresult, var_ConfirmedCases, var_confirmedDeaths
 
-            Label(frame1, text="Total Confirmed Cases").place(x=10, y=80)
-            Label(frame1, text="Total Deaths").place(x=10, y=120)
+            Label(frame1, text="Total Confirmed Cases").place(relx=0.547, rely=0.216)
+            Label(frame1, text="Total Deaths").place(relx=0.547, rely=0.266)
 
             var_ConfirmedCases = myresult1[0][1]
             var_confirmedDeaths = myresult1[0][2]
-            global e2, e3
-            
-            e2 = Label(frame1, text=var_ConfirmedCases)
-            e2.place(x=140, y=80)
-            
-            e3 = Label(frame1, text=var_confirmedDeaths)
-            e3.place(x=140, y=120)
+            global searchConDeaths, searchCases
+
+            searchConCases_label= Label(frame1, text=var_ConfirmedCases)
+            searchConCases_label.place(relx=0.687, rely=0.216)
+
+            searchConDeaths= Label(frame1, text=var_confirmedDeaths)
+            searchConDeaths.place(relx=0.687, rely=0.266)
 
         except Exception as e:
             print(e)
             myDb.rollback()
             myDb.close()
 
-    global e1,country
+    global e1, country
     e1 = Entry(frame1)
-    e1.place(relx=0.547, rely=0.206)
-    Label(frame1, text="Enter The Country").place(relx=0.657, rely=0.206)
+    e1.place(relx=0.546, rely=0.130)
+    Label(frame1, text="Enter The Country").place(relx=0.546, rely=0.089)
     #country = e1.get()
-    
+
     # print(country)
     Button(frame1, text="Search", command=search,
-           height=1, width=15).place(relx=0.547, rely=0.306)
+           height=1, width=15).place(relx=0.546, rely=0.170)
 
     status_label = Label(frame1,
                          text="LAST UPDATED ON ", relief=GROOVE)
@@ -532,10 +733,10 @@ def login():
 
 
 login_Button = Button(frame, text="Login", command=login)
-login_Button.grid(column=1, row=10)
+login_Button.place(relx=0.51999, rely=0.500)
 
-label_haveAccount = Label(frame, text="Do not have an account?")
-label_haveAccount.grid(column=1, row=11)
+label_haveAccount = Label(frame, text="Don't have an account?")
+label_haveAccount.place(relx=0.5, rely=0.6589)
 
 
 def sign_up():
@@ -549,9 +750,9 @@ def sign_up():
             # inserting records entered in the form into the database
             myCursor.execute("INSERT INTO userinfo VALUES('%s','%s','%s','%s','%s')" % (enter_firstname.get(), enter_secondname.get(), enter_username.get(),
                                                                                         enter_email.get(), enter_password2.get()))
-            #committing changes made in the database
+            # committing changes made in the database
             myDb.commit()
-            #deleting records entered into the entry boxes after inserting them into mysql table
+            # deleting records entered into the entry boxes after inserting them into mysql table
             enter_firstname.delete(0, END)
             enter_secondname.delete(0, END)
             enter_username.delete(0, END)
@@ -561,7 +762,7 @@ def sign_up():
 
             signUp.place_forget()
         else:
-            #when the password do not match with any in the record.
+            # when the password do not match with any in the record.
             messagebox.showwarning(
                 title="password", message="Password do not match")
 
@@ -603,12 +804,11 @@ def sign_up():
     submit_Button.grid(column=1, row=10, padx=5, pady=5, sticky=NSEW)
 
 
-def quit():
-    signUp.destroy()
+
 
 
 sign_Button = Button(frame, text="Sign Up", command=sign_up)
-sign_Button.grid(column=1, row=12, sticky='NSEW')
+sign_Button.place(relx=0.5199,rely=0.6900)
 
 
 root.mainloop()
