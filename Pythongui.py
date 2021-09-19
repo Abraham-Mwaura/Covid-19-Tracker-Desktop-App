@@ -191,7 +191,7 @@ def global_window():
 
 def yourHealth_window():
     global health_welcLabel
-    global icon_backHome, icon_backHome1
+    global icon_backHome, icon_backHome1, predict
 
     frame_health = Frame(root)
     frame_health.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
@@ -268,47 +268,12 @@ def yourHealth_window():
     measureTemp_Btn.grid(column=3, row=3)
 
 
-        # "has patient been in contact with a confirmed COVID-19 patient\n"
-        # ans=input("has patient traveled from a country declared as a hotspot zone\n")
-
-        # ans=input("Does patient have asthma, chronic bronchitis, pulmonary hypertension,diabetes, sickle cell anaemia, chronic liver or kidney disease?\n")
-        # if ans=='yes':
-
-        # ans=input("Is patient living in a town declared as Covid-19  hotspot zone?\n")
-
-        # ans=input("Has patient been vaccinated\n")
 
 
 
 
-        # ans=input("Does patient have a temperature higher than 38°c?\n")
-
-        # ans=input("Does patient have chest pain or pressure\n")
-
-        # ans=input("Does patient have trouble breathing?\n")
-
-        # ans=input("Is  Patient experiencing loss of speech or movement?\n"
-
-        # print("severe symptoms percentage= ",s,"%")
 
 
-
-        # ans=input("Does patient have a fever?\n")
-
-        # ans=input("Does patient have a dry cough?\n") 
-
-        # ans=input("Does patient have a running nose?\n")
-
-        # ans=input("Is patient experiencing loss of smell or taste?\n")
-        # ans=input("Does patient have a sore throat?\n")
-
-        # ans=input("Does patient have a headache?\n"
-
-        # ans=input("Is patient experiencing loss of appetite?\n")
-        # ans=input("Is patient experiencing fatigue?\n")
-        # ans=input("Does patient have diarrhea?\n")
-
-        # ans=input("Does patient have muscle or joint pain\n")
 
 
 
@@ -342,14 +307,45 @@ def yourInfo_window():
 
 def developer_window():
     global dev_welcLabel
-    global icon_backHome, icon_backHome1
+    global icon_backHome, icon_backHome1, icon_abraham1, icon_abraham,icon_trevor1,icon_trevor,icon_mirriam,icon_mirriam1
 
     frame_dev = Frame(root)
     frame_dev.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
     frame.forget()
 
+#C:/Users/use/Desktop/Covid-19 Group project/images
+
+    icon_abraham= Image.open(
+        "C:/Users/use/Desktop/Covid-19 Group project/images/abraham.jpg")
+    icon_abraham = icon_abraham.resize((200, 200), Image.ANTIALIAS)
+    icon_abraham1= ImageTk.PhotoImage(icon_abraham)
+    abraham_btn = Button(frame_dev, image=icon_abraham1)
+    abraham_btn.place(relx=0.061, rely=0.136)
+    label_abraham= Label(frame_dev, text="Name :Abraham Mwaura\n\n Profession:Biomedical Engineering Student\nRoles:Team leader,GUI development\n\nSkills: Web Development,Desktop GUI development,Leadership, Strategist\n\n Languages and frameworks:C,C++,Python, Tkinter, React\n Contact: amwaura101@gmail.com", relief=FLAT,font="Helvetica  10")
+    label_abraham.place(relx=0.01, rely=0.443,relheight=0.45, relwidth=0.34)
+ 
+    icon_trevor= Image.open(
+        "C:/Users/use/Desktop/Covid-19 Group project/images/trevor.jpg")
+    icon_trevor = icon_trevor.resize((200, 200), Image.ANTIALIAS)
+    icon_trevor1= ImageTk.PhotoImage(icon_trevor)
+    trevor_btn = Button(frame_dev, image=icon_trevor1)
+    trevor_btn.place(relx=0.396, rely=0.136)
+    label_trevor= Label(frame_dev,text="Name: Trevor Agola\n\n Profession: Electrical and Electronics Engineering\nRole: Microcontroller programming, Hardware Intergration, UI Design.\n\n Skills: Graphic design, Hardware Programming, team player, creative\n\n.Languages/Framework: C,C++, Arduino, Python, CSS\n.Contact: trevoragola5968@gmail.com ",relief=FLAT,font="Helvetica  10")
+    label_trevor.place(relx=0.366,rely=0.443, relheight=0.45, relwidth=0.323)
+ 
+    icon_mirriam= Image.open(
+        "C:/Users/use/Desktop/Covid-19 Group project/images/mirriam.jpg")
+    icon_mirriam = icon_mirriam.resize((200, 200), Image.ANTIALIAS)
+    icon_mirriam1= ImageTk.PhotoImage(icon_mirriam)
+    mirriam_btn = Button(frame_dev, image=icon_mirriam1)
+    mirriam_btn.place(relx=0.750, rely=0.136)
+    label_mirriam= Label(frame_dev,text="Name: Mirriam Mwende Mbithi\n\nProfession: Electrical and Electronics Engineering student\nRole: Database Management, GUI development\n\nSkills: Database Management, GUI programming,\ngoal-oriented, team player\n\nLanguages/Frameworks: SQL,Tkinter,C++,C, Python\nContact: mirriammwende001@gmail.com",relief=FLAT,font="Helvetica  10")
+    label_mirriam.place(relx=0.700,rely=0.443,relheight=0.45,relwidth=0.323)
+
+
+
     dev_welcLabel = Label(
-        frame_dev, text="We like coding, coding is the best thing that happened to us", font="Helvetica  25 bold", padx=100)
+        frame_dev, text="Developers Information", font="Helvetica  20 bold", padx=100)
     dev_welcLabel.grid(column=1, row=0)
 
     def devWindowQuit():
