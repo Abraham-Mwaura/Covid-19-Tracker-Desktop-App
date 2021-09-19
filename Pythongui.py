@@ -179,7 +179,7 @@ def global_window():
     results = my_conn.execute('''SELECT * from live_cases''')
     for dt in results:
         trv.insert("", 'end', iid=dt[0], text=dt[0],
-                   values=(dt[0], dt[1], dt[2], dt[3]))
+                   values=(dt[0], f'{int(dt[1]):,}', f'{int(dt[2]):,}', dt[3]))
 
     def globalWindowQuit():
         frame_globe.place_forget()
@@ -194,7 +194,7 @@ def global_window():
 
 
 def yourHealth_window():
-    global health_welcLabel
+    global health_welcLabel,tempSum
     global icon_backHome, icon_backHome1, predict1, text1, text2, predict2, predict3
 
     frame_health = Frame(root)
@@ -227,7 +227,7 @@ def yourHealth_window():
 
         def ReadData():
             global i
-            for i in range(5):
+            for i in range(10):
                 # reads serial data in byte string
                 byteTemp = serInit.readline()
 
@@ -241,8 +241,8 @@ def yourHealth_window():
                 pointTemp = float(UniTemp2[0])
                 print(pointTemp)
                 # arData.append(UniTemp2)
-                temp_label = Label(frame_health, text=str(pointTemp))
-                temp_label.grid(column=4, row=4)
+                # temp_label = Label(frame_health, text=str(pointTemp))
+                # temp_label.grid(column=4, row=4)
 
                 global tempSum
 
@@ -259,13 +259,13 @@ def yourHealth_window():
         def avg(a, b):
             return a/b
         # final temperature
-        finalTemp = round(avg(tempSum, 30), 1)
+        finalTemp = round(avg(tempSum, 10), 1)
 
         avgTemp_label = Label(
-            frame_health, text="Your Average temperature is " + str(finalTemp))
-        avgTemp_label.grid(column=5, row=5)
+            frame_health, text="Your Average temperature is \n " + str(finalTemp)+u"\N{DEGREE SIGN}"+"C ", font= 'helvetica 20 bold')
+        avgTemp_label.grid(column=5, row=8)
 
-        print("Your temperature is= ", finalTemp, "C")
+        #print("Your temperature is= ", finalTemp, "C")
 
     measureTemp_Btn = Button(
         frame_health, text="Click here to measure temperature", command=measureTemp, fg="#2E8BC0", font="helvetica 15 bold")
@@ -494,28 +494,7 @@ def yourHealth_window():
            command=recommendations).grid(row=34, column=1)
 
 
-def yourInfo_window():
-    global info_welcLabel
-    global icon_backHome, icon_backHome1
 
-    frame_info = Frame(root)
-    frame_info.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
-    frame.forget()
-
-    info_welcLabel = Label(
-        frame_info, text="This is the Customers Personal Information Window", font="Helvetica  25 bold", padx=100)
-    info_welcLabel.grid(column=1, row=0)
-
-    def infoWindowQuit():
-        frame_info.place_forget()
-
-    icon_backHome = Image.open(
-        "C:/Users/use/Desktop/Covid-19 Group project/images/backHome_icon.png")
-    icon_backHome = icon_backHome.resize((70, 50), Image.ANTIALIAS)
-    icon_backHome1 = ImageTk.PhotoImage(icon_backHome)
-    backHome_btn = Button(frame_info, image=icon_backHome1,
-                          relief=RAISED, command=infoWindowQuit)
-    backHome_btn.grid(row=0, column=0, pady=5)
 
 
 def developer_window():
@@ -635,7 +614,7 @@ def home_button():
             "C:/Users/use/Desktop/Covid-19 Group project/images/menu_icon.png")
         icon_menu = icon_menu.resize((50, 50), Image.ANTIALIAS)
         icon_menu1 = ImageTk.PhotoImage(icon_menu)
-        menu_btn = Button(frame1, image=icon_menu1, relief=RAISED)
+        menu_btn = Label(frame1, image=icon_menu1, relief=FLAT,bg="#233D72")
         menu_btn.place(rely=0.00625, relx=0.00625)
 
         icon_globe = Image.open(
@@ -654,13 +633,7 @@ def home_button():
                                relief=RAISED, command=yourHealth_window)
         heartbeat_btn.place(rely=0.25, relx=0.00625)
 
-        icon_info = Image.open(
-            "C:/Users/use/Desktop/Covid-19 Group project/images/info_icon.png")
-        icon_info = icon_info.resize((50, 50), Image.ANTIALIAS)
-        icon_info1 = ImageTk.PhotoImage(icon_info)
-        info_btn = Button(frame1, image=icon_info1,
-                          relief=RAISED, command=yourInfo_window)
-        info_btn.place(rely=0.375, relx=0.00625)
+
 
         icon_programmer = Image.open(
             "C:/Users/use/Desktop/Covid-19 Group project/images/programmer_icon.png")
@@ -668,7 +641,7 @@ def home_button():
         icon_programmer1 = ImageTk.PhotoImage(icon_programmer)
         programmer_btn = Button(frame1, image=icon_programmer1,
                                 relief=RAISED, command=developer_window)
-        programmer_btn.place(rely=0.5, relx=0.00625)
+        programmer_btn.place(rely=0.8, relx=0.00625)
     icons()
 
     def emojis():
@@ -690,21 +663,31 @@ def home_button():
         global icon_great, icon_bad, icon_notSure
         global great_btn, bad_btn, notSure_btn
         global icon_great1, icon_bad1, icon_notSure1
+        
+        def happyFeedback():
+            messagebox.showinfo("Happy", "we happy to here you're doing fine \n keep on with the fight against COVID\n wash hands and sanitize frequently")
 
         icon_great = Image.open(
             "C:/Users/use/Desktop/Covid-19 Group project/images/great_icon.png")
         icon_great = icon_great.resize((60, 60), Image.ANTIALIAS)
         icon_great1 = ImageTk.PhotoImage(icon_great)
         great_btn = Button(frame1, image=icon_great1, text='Great !', relief=FLAT,
-                           compound=TOP, font="Helvetica  8 bold", bg="#233D72", fg="white")
+                           compound=TOP, font="Helvetica  8 bold", bg="#233D72", fg="white",command=happyFeedback)
         great_btn.place(rely=0.3, relx=0.06375)
-
+        
+        def askTest():
+            global testResponse
+            testResponse=messagebox.askyesno("prompt", "Do you want to take a test")
+            if (testResponse==True):
+                yourHealth_window()
+            else:
+                pass
         icon_notSure = Image.open(
             "C:/Users/use/Desktop/Covid-19 Group project/images/notSure_icon.png")
         icon_notSure = icon_notSure.resize((60, 60), Image.ANTIALIAS)
         icon_notSure1 = ImageTk.PhotoImage(icon_notSure)
         notSure_btn = Button(frame1, image=icon_notSure1, text="Not sure", compound=TOP,
-                             font="Helvetica  8 bold", relief=FLAT, bg="#233D72", fg="white")
+                             font="Helvetica  8 bold", relief=FLAT, bg="#233D72", fg="white",command=askTest)
         notSure_btn.place(rely=0.3, relx=0.14126)
 
         icon_bad = Image.open(
@@ -712,7 +695,7 @@ def home_button():
         icon_bad = icon_bad.resize((60, 60), Image.ANTIALIAS)
         icon_bad1 = ImageTk.PhotoImage(icon_bad)
         bad_btn = Button(frame1, image=icon_bad1, relief=FLAT, compound=TOP,
-                         text=" Bad", font="Helvetica 8 bold", bg="#233D72", fg="white")
+                         text=" Bad", font="Helvetica 8 bold", bg="#233D72", fg="white",command=yourHealth_window)
         bad_btn.place(rely=0.3, relx=0.225)
     emojis()
 
@@ -737,26 +720,27 @@ def home_button():
         global kenyaCases, KenyaDeaths, kenyaDates
         # for j in myresult2:
         #     print(j)
-        kenyaCases = myresult2[0][1]
-        KenyaDeaths = myresult2[0][2]
+        kenyaCases = int(myresult2[0][1])
+        KenyaDeaths = int(myresult2[0][2])
         kenyaDates = myresult2[0][3]
         print(kenyaCases)
         print(KenyaDeaths)
 
+#f'{kenyaCases:,}' f'{KenyaDeaths:,}' 
         label_cases = Label(frame1, text="CONFIRMED CASES \n " +
-                            kenyaCases, relief=GROOVE, font="Helvetica 10 bold")
+                            f'{kenyaCases:,}', relief=GROOVE, font="Helvetica 10 bold")
         label_cases.place(relx=0.075, rely=0.586)
 
         label_recoveries = Label(
-            frame1, text="CONFIRMED RECOVERIES \n ", relief=GROOVE, font="Helvetica 10 bold")
+            frame1, text="CONFIRMED RECOVERIES \n (not up to date) ", relief=GROOVE, font="Helvetica 10 bold")
         label_recoveries.place(relx=0.2195, rely=0.586)
 
         label_deaths = Label(frame1, text="CONFIRMED DEATHS \n " +
-                             KenyaDeaths, relief=GROOVE, font="Helvetica 10 bold")
+                             f'{KenyaDeaths:,}', relief=GROOVE, font="Helvetica 10 bold")
         label_deaths.place(relx=0.075, rely=0.678)
 
-        label_vaccine = Label(frame1, text="VACCINATION RATE \n" +
-                              kenyaDates, relief=GROOVE, font="Helvetica 10 bold")
+        label_vaccine = Label(frame1, text="VACCINATION RATE \n +(coming up soon)", 
+                               relief=GROOVE, font="Helvetica 10 bold")
         label_vaccine.place(relx=0.2185, rely=0.678)
 
     kenyaData()
@@ -779,28 +763,27 @@ def home_button():
         myresult3 = myCursor.fetchall()
         global globalCases, globalDeaths, globalDate
 
-        globalCases = myresult3[0][1]
-        globalDeaths = myresult3[0][2]
+        globalCases = int(myresult3[0][1])
+        globalDeaths = int(myresult3[0][2])
         globalDate = myresult3[0][3]
-        print(globalCases)
-        print(globalDeaths)
 
         #global stats
         global label_G_cases, label_G_recoveries, label_G_deaths, label_G_vaccine
         label_G_cases = Label(frame1, text="CONFIRMED CASES \n" +
-                              globalCases, relief=GROOVE, font="Helvetica 10 bold")
+                              f'{globalCases:,}' , relief=GROOVE, font="Helvetica 10 bold")
+                              #f'{globalDeaths:,}' 
         label_G_cases.place(relx=0.563, rely=0.6)
 
         label_G_recoveries = Label(
-            frame1, text="CONFIRMED RECOVERIES \n ", relief=GROOVE, font="Helvetica 10 bold")
-        label_G_recoveries.place(relx=0.697, rely=0.6)
+            frame1, text="CONFIRMED RECOVERIES \n (not up do date)", relief=GROOVE, font="Helvetica 10 bold")
+        label_G_recoveries.place(relx=0.647, rely=0.6)
 
         label_deaths = Label(frame1, text="CONFIRMED DEATHS \n" +
-                             globalDeaths, relief=GROOVE, font="Helvetica 10 bold")
+                             f'{globalDeaths:,}' , relief=GROOVE, font="Helvetica 10 bold")
         label_deaths.place(relx=0.563, rely=0.688)
 
-        label_G_vaccine = Label(frame1, text="VACCINATION RATE \n" +
-                                globalDate, relief=GROOVE, font="Helvetica 10 bold")
+        label_G_vaccine = Label(frame1, text="VACCINATION RATE \n(coming up soon)" ,
+                                relief=GROOVE, font="Helvetica 10 bold")
         label_G_vaccine.place(relx=0.697, rely=0.688)
 
         global icon_logOut, icon_logOut1
@@ -918,7 +901,7 @@ def home_button():
            height=1, width=15).place(relx=0.546, rely=0.170)
 
     status_label = Label(frame1,
-                         text="LAST UPDATED ON ", relief=GROOVE)
+                         text="LAST UPDATED ON " +globalDate, relief=GROOVE)
     status_label.place(relx=0.00001, rely=0.98, relwidth=1)
 
 
