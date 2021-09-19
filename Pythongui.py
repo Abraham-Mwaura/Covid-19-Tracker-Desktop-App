@@ -20,7 +20,6 @@ from sqlalchemy.engine import result
 #from tooltip import ToolTip
 #from tkinter.constants import BOTH
 
-
 my_conn = create_engine("mysql+mysqldb://root:root@localhost/users")
 
 name=''
@@ -924,7 +923,7 @@ def home_button():
 
 
 def login():
-    global name 
+    global name, i
     user_ver = enter_usernamel.get()
     print(user_ver)
     pas_ver = enter_passwordl.get()
@@ -933,12 +932,12 @@ def login():
     test = myCursor.execute(sql, [(user_ver), (pas_ver)])
     print(test)
     results = myCursor.fetchall()
-    name= results[0][0]
     if results:
         for i in results:
             enter_passwordl.delete(0, END)
             enter_usernamel.delete(0, END)
             print(results)
+            name= results[0][0]
             home_button()  # if credentials are correct,the function logged is executed
             # break
     else:
