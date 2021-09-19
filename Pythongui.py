@@ -944,32 +944,44 @@ label_haveAccount.place(relx=0.5, rely=0.6589)
 
 def sign_up():
 
-    global signUp
+    global signUp, user, email1 
     signUp = Frame(root)
     signUp.place(x=0, y=0, relheight=1, relwidth=1, anchor=NW)
 
     Label(signUp, text="Wash your hands, sanitize & Observe social distancing ", fg="#2E8BC0", font= 'helvetica 15 bold').place(relx= 0.32, rely=0.085)
 
     def submit():
-        if(enter_password1.get() == enter_password2.get()):
-            # inserting records entered in the form into the database
-            myCursor.execute("INSERT INTO userinfo VALUES('%s','%s','%s','%s','%s')" % (enter_firstname.get(), enter_secondname.get(), enter_username.get(),
-                                                                                        enter_email.get(), enter_password2.get()))
-            # committing changes made in the database
-            myDb.commit()
-            # deleting records entered into the entry boxes after inserting them into mysql table
-            enter_firstname.delete(0, END)
-            enter_secondname.delete(0, END)
-            enter_username.delete(0, END)
-            enter_email.delete(0, END)
-            enter_password1.delete(0, END)
-            enter_password2.delete(0, END)
+            
+        user=enter_username.get()
+        email1=enter_email.get()
+        sql = "select username and email from userinfo where username =%s or email=%s"
+        myCursor.execute(sql,[(user),(email1)])
+        results = myCursor.fetchall()
 
-            signUp.place_forget()
+        if results:
+            messagebox.showerror("Invalid Details", "Username or email already take")
+
         else:
-            # when the password do not match with any in the record.
-            messagebox.showwarning(
-                title="password", message="Password do not match")
+            if(enter_password1.get() == enter_password2.get()):
+
+                # inserting records entered in the form into the database
+                myCursor.execute("INSERT INTO userinfo VALUES('%s','%s','%s','%s','%s')" % (enter_firstname.get(), enter_secondname.get(), enter_username.get(),
+                                                                                            enter_email.get(), enter_password2.get()))
+                # committing changes made in the database
+                myDb.commit()
+                # deleting records entered into the entry boxes after inserting them into mysql table
+                enter_firstname.delete(0, END)
+                enter_secondname.delete(0, END)
+                enter_username.delete(0, END)
+                enter_email.delete(0, END)
+                enter_password1.delete(0, END)
+                enter_password2.delete(0, END)
+
+                signUp.place_forget()
+            else:
+                # when the password do not match with any in the record.
+                messagebox.showwarning(
+                    title="password", message="Password do not match")
 
     label_CreateAccount = Label(
         signUp, text="Create account", font="Helvetica  20 bold")
